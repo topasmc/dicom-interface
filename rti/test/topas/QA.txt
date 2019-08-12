@@ -1,0 +1,72 @@
+includeFile = beam.txt
+
+####################################################
+#----------------- World   --------------------
+####################################################
+Ge/World/HLX = 45.0 cm
+Ge/World/HLY = 45.0 cm
+Ge/World/HLZ = 45.0 cm
+
+####################################################
+#----------------- RTIonComponent ------------------
+####################################################
+# Nothing to do
+
+####################################################
+#----------------- RTIonSource  --------------------
+####################################################
+# Nothing to do
+
+####################################################
+#----------------- Waterphantom --------------------
+####################################################
+# Initially waterphantom center is iso
+s:Ge/WaterPhantomTop/Type   = "Group"
+s:Ge/WaterPhantomTop/Parent = "IEC_F"
+d:Ge/WaterPhantomTop/TransX = 0 mm
+d:Ge/WaterPhantomTop/TransY = 0 mm
+d:Ge/WaterPhantomTop/TransZ = 0.0 cm
+d:Ge/WaterPhantomTop/RotX   = 0 deg
+d:Ge/WaterPhantomTop/RotY   = 0 deg
+d:Ge/WaterPhantomTop/RotZ   = 0 deg
+
+#--- Water phantom target
+s:Ge/WaterPhantom/Type="TsBox"
+s:Ge/WaterPhantom/Parent="WaterPhantomTop"
+#Water: I-value 75 eV
+#G4_Water: I-value: 78, ICRU 75 +- 3 eV
+s:Ge/WaterPhantom/Material="G4_WATER"
+d:Ge/WaterPhantom/HLX= 17.5 cm
+d:Ge/WaterPhantom/HLY= 17.5 cm
+d:Ge/WaterPhantom/HLZ= 19 cm
+d:Ge/WaterPhantom/TransX = 0. cm
+d:Ge/WaterPhantom/TransY = 0. cm
+d:Ge/WaterPhantom/TransZ = Ge/WaterPhantom/HLZ  cm * -1.0
+d:Ge/WaterPhantom/RotX = 0. deg
+d:Ge/WaterPhantom/RotY = 0. deg
+d:Ge/WaterPhantom/RotZ = 0. deg
+s:Ge/WaterPhantom/Color = "blue"
+
+####################################################
+#----------------- DoseGrid --------------------
+####################################################
+#--- Dose grid in water phantom
+s:Ge/RTION/DoseGrid/Parent = "WaterPhantom"
+s:Ge/RTION/DoseGrid/Type   = "TsBox"
+#Voxel size and dimension are temporally set directly
+i:Ge/RTION/DoseGrid/XBins  = 175 #2.0 mm 
+i:Ge/RTION/DoseGrid/YBins  = 175 #2.0 mm
+i:Ge/RTION/DoseGrid/ZBins  = 190 #2.0 mm
+
+d:Ge/RTION/DoseGrid/HLX = Ge/WaterPhantom/HLX cm
+d:Ge/RTION/DoseGrid/HLY = Ge/WaterPhantom/HLY cm
+d:Ge/RTION/DoseGrid/HLZ = Ge/WaterPhantom/HLZ cm
+
+#W.R.T PatientGroup
+d:Ge/RTION/DoseGrid/TransX     = 0.0 cm
+d:Ge/RTION/DoseGrid/TransY     = 0.0 cm
+d:Ge/RTION/DoseGrid/TransZ     = 0.0 cm
+d:Ge/RTION/DoseGrid/RotX       = 0 deg
+d:Ge/RTION/DoseGrid/RotY       = 0 deg 
+d:Ge/RTION/DoseGrid/RotZ       = 0 deg
+b:Ge/RTION/DoseGrid/IsParallel = "True"

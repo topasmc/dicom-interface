@@ -1,0 +1,159 @@
+###################################################
+#----------------- IncludeFiles  ------------------
+# Beam describing chain
+# Beam control chain from RT-Ion Plan
+# Target describing chain
+# Target scoring 
+###################################################
+
+#includeFile = MCAUTO_RTION.txt 
+
+i:Ts/MaxInterruptedHistories = 1000
+
+#Bertini cascade model
+Ph/Default/Modules = 6 "g4em-standard_opt4" "g4h-phy_QGSP_BERT_HP" "g4decay" "g4ion-binarycascade" "g4h-elastic_HP" "g4stopping"
+
+###################################################
+#----------------- World volume  ------------------
+###################################################
+Ge/World/HLX = 50.0 cm
+Ge/World/HLY = 50.0 cm
+Ge/World/HLZ = 50.0 cm
+Ge/World/Material = "Air"
+
+###################################################
+#----------------- Coordination  ------------------
+###################################################
+#IEC_F: Fixed : 
+# Note: Don't rotate this (April4,2019). translation is OK
+s:Ge/IEC_F/Parent  = "World"
+s:Ge/IEC_F/Type    = "Group"
+d:Ge/IEC_F/RotX    = 0. deg
+d:Ge/IEC_F/RotY    = 0. deg #Geometry and Source rotate oposite
+d:Ge/IEC_F/RotZ    = 0. deg #?
+d:Ge/IEC_F/TransX  = 0. mm
+d:Ge/IEC_F/TransY  = 0. mm
+d:Ge/IEC_F/TransZ  = 0. mm
+
+
+####################################################
+### RangeShifter/Aperture/Compensator become a mass 
+### geometry for only patient calclation
+#####################################################
+####################################################
+### RangeShifter/Aperture/Compensator become a mass
+### geometry for only patient calclation
+### 1.15 is from Astroid Database (this might be RSP)
+### we are using widely accepted PMMA density
+### 1.180 g/cm3 and 74.0 is used.
+
+#####################################################
+sv:Ma/RS_Lucite/Components =3 "Hydrogen" "Carbon" "Oxygen"
+uv:Ma/RS_Lucite/Fractions  =3 0.080538 0.599848 0.319614
+d:Ma/RS_Lucite/Density     = 1.18 g/cm3
+d:Ma/RS_Lucite/MeanExcitationEnergy=74.0 eV
+s:Ma/RS_Lucite/DefaultColor="grey"
+#3     G4_PLEXIGLASS              1.19              74
+#             1     0.080538
+#             6     0.599848
+#             8     0.319614
+
+
+###################################################
+#-- RTION geometry
+###################################################
+# RTION is a group of geometries specified in RTION plan file
+# BeamNumber or BeamName can pick the one
+# Because TOPAS rotates X first, Y and then Z
+# Rotating X -> align to DICOM coordinate -> So need to rotate around Z for DICOM
+# And then move along x,y,z with respect to mother volume
+# Initial beam geometry is IEC coordinate
+
+s:Ge/RTION/Parent      = "IEC_F" 
+s:Ge/RTION/Type        = "TsRTIonComponents"
+s:Ge/RTION/File        = "../../treatment_machines/rbe/rtip_demo.dcm"
+i:Ge/RTION/BeamNumber  = 1 
+s:Ge/RTION/BeamName    = "beam0"
+s:Ge/RTION/ImgDirectory = "" 
+
+#
+#RotCollimator/Gantry/PatientSupport/IEC2DICOM are RTION specific
+d:Ge/RTION/RotCollimator      = 0.0 deg
+d:Ge/RTION/RotGantry          = 0.0 deg
+d:Ge/RTION/RotPatientSupport  = 0.0 deg
+d:Ge/RTION/RotIEC2DICOM       = 0.0 deg
+
+#TransX or ShiftX/TransX?
+d:Ge/RTION/TransX      = 0 mm
+d:Ge/RTION/TransY      = 0 mm
+d:Ge/RTION/TransZ      = 0 mm
+
+#Material information for subcomponent
+s:Ge/RTION/rangeshifter/Material = "RS_Lucite"
+s:Ge/RTION/Block/Material        = "G4_BRASS"
+s:Ge/RTION/Compensator/Material  = ""
+s:Ge/RTION/Snout/Material        = ""
+
+b:Ge/QuitIfOverlapDetected       = "F"
+b:Ge/RTION/IsParallel            = "F"
+b:Ge/RTION/Include               = "T"
+
+# Changeable Parameters for setting other components
+dc:Ge/RTION/IsoCenterX  = 0 mm
+dc:Ge/RTION/IsoCenterY  = 0 mm
+dc:Ge/RTION/IsoCenterZ  = 0 mm
+
+dc:Ge/RTION/CollimatorAngle     = 0 deg
+dc:Ge/RTION/GantryAngle         = 0 deg
+dc:Ge/RTION/PatientSupportAngle = 0 deg
+dc:Ge/RTION/Iec2DicomAngle      = 0 deg
+
+# Optional parameters
+b:Ge/RTION/IncludeDoseGridIfExist     = "F" 
+b:Ge/RTION/IncludeSnoutIfExist        = "T"
+b:Ge/RTION/IncludeRangeshifterIfExist = "T"
+b:Ge/RTION/IncludeBlockIfExist        = "T"
+b:Ge/RTION/IncludeCompensatorIfExist  = "T"
+
+
+###################################################
+#-- RTION source 
+###################################################
+# Right handed coordinate
+s:So/RTION/Type        = "TsRTIonSource" 
+s:So/RTION/Component   = "IEC_F"
+s:So/RTION/File        = "../../treatment_machines/rbe/rtip_demo.dcm"
+i:So/RTION/BeamNumber  = 1 
+s:So/RTION/BeamName    = "beam0"
+d:So/RTION/SID         = 39.0 cm #source to isocenter distance. 
+
+# Translation w.r.t mother volume
+# ShiftX/Y/Z is RTION source specific parameters
+d:So/RTION/ShiftX = 0.0 mm 
+d:So/RTION/ShiftY = 0.0 mm 
+d:So/RTION/ShiftZ = 0.0 mm 
+
+#RotCollimator/Gantry/PatientSupport/IEC2DICOM are RTION specific
+d:So/RTION/RotCollimator      = 0.0 deg 
+d:So/RTION/RotGantry          = 0.0 deg 
+d:So/RTION/RotPatientSupport  = 0.0 deg 
+d:So/RTION/RotIEC2DICOM       = 0.0 deg 
+
+# Changeable parameters set by 'TsRTIonSource'
+dc:So/RTION/IsoCenterX  = 0 mm
+dc:So/RTION/IsoCenterY  = 0 mm
+dc:So/RTION/IsoCenterZ  = 0 mm
+
+# Parameters output by RTION_source
+dc:So/RTION/CollimatorAngle     = 0 deg
+dc:So/RTION/Iec2DicomAngle      = 0 deg
+dc:So/RTION/GantryAngle         = 0 deg
+dc:So/RTION/PatientSupportAngle = 0 deg
+
+u:So/RTION/ParticlesPerHistory = -1 
+b:So/RTION/NormalizeHistoriesPerDose = "T" #not yet implemented
+
+i:Ts/ShowHistoryCountAtInterval = 10000
+b:Ts/ShowCPUTime = "T"
+#i:Ts/NumberOfThreads = 1
+#b:Ts/DumpParameters = "T"

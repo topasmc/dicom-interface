@@ -1,0 +1,27 @@
+includeFile = beam.txt
+
+Ts/PauseBeforeSequence = "True"
+
+#i:Tf/Verbosity = 1
+
+#/vis/viewer/set/viewpointThetaPhi 120 50 deg
+#/vis/viewer/set/viewpointThetaPhi 80 20 deg
+d:Gr/MyOGLb/Theta = 10. deg
+d:Gr/MyOGLb/Phi   = 50. deg
+#b:Gr/MyOGLb/IncludeGeometry = "t"
+b:Gr/MyOGLb/IncludeTrajectories = "t"
+#b:Gr/MyOGLb/HiddenLineRemovalForGeometry = "f"
+#s:Gr/MyOGLb/RefreshEvery = "Run"
+
+s:Gr/MyOGLb/Type = "OpenGL"
+i:Gr/MyOGLb/WindowSizeX = 1000
+i:Gr/MyOGLb/WindowSizeY = 800
+i:Gr/MyOGLb/WindowPosX = 0
+i:Gr/MyOGLb/WindowPosY = 600
+s:Gr/MyOGLb/ColorBy = "particletype"
+b:Gr/MyOGLb/IncludeAxes = "true"
+s:Gr/MyOGLb/AxesComponent = "IEC_F"
+d:Gr/MyOGLb/AxesSize = 20.0 cm
+u:Gr/MyOGLb/Zoom = 1
+s:Gr/MyOGLb/Projection = "Perspective"
+d:Gr/MyOGLb/PerspectiveAngle = 10.0 deg

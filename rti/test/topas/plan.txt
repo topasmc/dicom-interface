@@ -1,0 +1,106 @@
+includeFile = beam.txt
+
+####################################################
+##------ Overriding parameters        -----
+####################################################
+
+Ge/World/HLX = 60.0 cm
+Ge/World/HLY = 80.0 cm
+Ge/World/HLZ = 60.0 cm
+Ge/World/Material = "Air"
+
+####################################################
+##------ RTION as layered mass geometry        -----
+####################################################
+sv:Ph/Default/LayeredMassGeometryWorlds = 1 "RTION" 
+
+####################################################
+#----------------- RTIonComponent ------------------
+####################################################
+# RTION geometry is parallel
+Ge/RTION/IsParallel     = "T"
+
+# ---
+# 1. Patient CT to calculate 
+# Image center in Patient DICOM coordinate system
+# Iso center in Patient DICOM coordinate 
+# As TOPAS places center of patient CT at the origin, 
+# ---
+#s:Ge/RTION/ImgDirectory = Rt/RTION/CTDirectory
+#dc:Ge/RTION/ImgCenterX  = 0 mm
+#dc:Ge/RTION/ImgCenterY  = 0 mm
+#dc:Ge/RTION/ImgCenterZ  = 0 mm
+#
+# ---
+# 2. Position RTIon components (only beamline component)
+# this will not affect dose-grid
+# ---
+
+#Ge/RTION/TransX = Ge/RTION/IsoCenterX - Ge/RTION/ImgCenterX mm
+#Ge/RTION/TransY = Ge/RTION/IsoCenterY - Ge/RTION/ImgCenterY mm
+#Ge/RTION/TransZ = Ge/RTION/IsoCenterZ - Ge/RTION/ImgCenterZ mm
+
+# ---
+# 3. Rotation RTIon components (only beamline components) 
+# ---
+#RotCollimator/Gantry/PatientSupport/IEC2DICOM are RTION specific
+Ge/RTION/RotCollimator      = Ge/RTION/CollimatorAngle deg
+Ge/RTION/RotGantry          = Ge/RTION/GantryAngle deg
+Ge/RTION/RotPatientSupport  = -1.0 * Ge/RTION/PatientSupportAngle deg
+Ge/RTION/RotIEC2DICOM       = 90 deg 
+
+# ---
+# 4. Dosegrid
+# ---
+#s:Ge/RTION/rtdosefile   = Rt/RTION/DoseFile 
+#b:Ge/RTION/IncludeDoseGridIfExist = "T"
+
+
+####################################################
+#----------------- RTIonSource  --------------------
+####################################################
+# ---
+# 1. Patient CT to calculate 
+# ---
+#s:So/RTION/ImgDirectory = Rt/RTION/CTDirectory
+#dc:So/RTION/ImgCenterX  = 0 mm
+#dc:So/RTION/ImgCenterY  = 0 mm
+#dc:So/RTION/ImgCenterZ  = 0 mm
+
+# ---
+# 2. Position RTIon components (only beamline component)
+# this will not affect dose-grid
+# ---
+#So/RTION/ShiftX = So/RTION/IsoCenterX - So/RTION/ImgCenterX mm
+#So/RTION/ShiftY = So/RTION/IsoCenterY - So/RTION/ImgCenterY mm
+#So/RTION/ShiftZ = So/RTION/IsoCenterZ - So/RTION/ImgCenterZ mm
+
+So/RTION/RotCollimator      = So/RTION/CollimatorAngle deg
+So/RTION/RotGantry          = So/RTION/GantryAngle deg
+So/RTION/RotPatientSupport  = -1.0 * So/RTION/PatientSupportAngle deg
+So/RTION/RotIEC2DICOM       = 90  deg
+
+####################################################
+##------ DICOM Patient  -----
+####################################################
+
+#s:Ge/Patient/Type     = "TsDicomPatient"
+#s:Ge/Patient/Parent   = "IEC_F"
+#s:Ge/Patient/Material = "G4_WATER"
+#s:Ge/Patient/DicomDirectory      = Rt/RTION/CTDirectory
+
+#d:Ge/Patient/TransX   = 0.0 mm 
+#d:Ge/Patient/TransY   = 0.0 mm
+#d:Ge/Patient/TransZ   = 0.0 mm 
+
+#d:Ge/Patient/RotX     = 0. deg
+#d:Ge/Patient/RotY     = 0. deg
+#d:Ge/Patient/RotZ     = 0. deg
+
+# Specify which slices to show.
+# Comment this out or set to zero to show all slices.
+# Set to -1 to show only center slice.
+# Set to -2 to show first, center and last slice.
+#iv:Ge/Patient/ShowSpecificSlicesX = 1 -1
+#iv:Ge/Patient/ShowSpecificSlicesY = 1 -1
+iv:Ge/Patient/ShowSpecificSlicesZ = 1 -2
