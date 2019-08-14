@@ -72,7 +72,7 @@ $ cd /your_sw_path/rti.git/test/topas/
 $ topas rti_beam.txt
 ```
 
-For more detail, please see this project's wiki page [https://github.com/topasmc/dicom-interface/wiki](https://github.com/mghro/rtion-interface-mc/wiki).
+For more detail, please see this project's wiki page [https://github.com/topasmc/dicom-interface/wiki](https://github.com/topasmc/dicom-interface/wiki).
 
 ## Authors
 
