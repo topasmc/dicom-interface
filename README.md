@@ -7,7 +7,7 @@ author: Jungwook Shin
 date: July 1, 2019
 -->
 
-<span style="color:red">*As of Aug14, 2019, current version is BETA.*</span>
+*<span style="color:red">Current version is BETA as of Aug14, 2019</span>*
 
 DICOM RT-Ion interface, shortly **RTI**, is a library to convert treatment planning information in DICOM format into Monte Carlo components on-the-fly such as geometries and beam source. The **RTI** allows integration of DICOM-RT Ion interface within a MC engine to provide more reliable and consistent performance than with a script-based processing to interpret DICOM information.
 For the Monte Carlo simulation, [TOPAS extensions](https://topas.readthedocs.io/en/latest/extension-docs/intro.html#) of geometry and particle source to connect **RTI** are provided.
