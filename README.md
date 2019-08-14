@@ -1,4 +1,4 @@
-## DICOM RT-Ion interface for MC simulation
+## DICOM RT-Ion interface for MC simulation <span style="color:red"><em>BETA</em></span>
 ***
 
 <!-- 
