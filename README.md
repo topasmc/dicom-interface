@@ -38,7 +38,7 @@ Beamline geometries, gantry and patient coordinate systems, and fluence map are 
 As **RTI** is a header only library, copy or download the files to somewhere in your system.
 ```bash
 $ cd /<your_sw_path>/
-$ git clone https://github.com/mghro/rtion-interface-mc.git rti.git
+$ git clone https://github.com/topasmc/dicom-interface rti.git
 ```
 
 Then, go to the directory where your topas is installed. 
@@ -72,7 +72,7 @@ $ cd /your_sw_path/rti.git/test/topas/
 $ topas rti_beam.txt
 ```
 
-For more detail, please see this project's wiki page [https://github.com/mghro/rtion-interface-mc/wiki](https://github.com/mghro/rtion-interface-mc/wiki).
+For more detail, please see this project's wiki page [https://github.com/topasmc/dicom-interface/wiki](https://github.com/mghro/rtion-interface-mc/wiki).
 
 ## Authors
 
