@@ -26,7 +26,10 @@ Beamline geometries, gantry and patient coordinate systems, and fluence map are 
 ### Requirements
 
 - **[TOPAS](http://www.topasmc.org)** (version 3.2) is required and assumed pre-installed.
-- **[GDCM](http://gdcm.sourceforge.net)** (version > 2.6.8) library (header and objects) is required.
+  tested versions are 3.2 and 3.1
+- **[GDCM](http://gdcm.sourceforge.net)** (tested versions are 2.4 and 2.6.) library (header and objects) is required.
+  tested versions are 2.4 and 2.6.
+  version 3.0 doesn't work with RTI (thank to Dohyeon).
 
 ### Tested operating systems
   - Mac OS X
@@ -63,7 +66,7 @@ include_directories (
 
 
 ```bash
-$ cmake -DTOPAS_EXTENSIONS_DIR=/<your_sw_path>/rti.git/topas/rtion .
+$ cmake -DTOPAS_EXTENSIONS_DIR=/<your_sw_path>/rti.git/rti/topas/rtion .
 $ make -j4
 ```
 
