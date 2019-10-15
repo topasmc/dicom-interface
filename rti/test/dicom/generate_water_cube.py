@@ -64,7 +64,7 @@ def main(dir, args):
     parser.add_argument('--RTtime', dest='RTtime'  , type=str, required=False, default='150000')
     parser.add_argument('--RTgeom', dest='RTgeom'  , type=str, required=False, default='PATIENT')
     parser.add_argument('--sadX'  , dest='sadX'    , type=float, required=False, default=2000.0)
-    parser.add_argument('--sadY'  , dest='sadY'    , type=float, required=False, default=1900.0)
+    parser.add_argument('--sadY'  , dest='sadY'    , type=float, required=False, default=1800.0)
     parser.add_argument('--nBlocks',dest='nBlocks' , type=int, required=False, default=0)
     parser.add_argument('--isoX'  , dest='isoX'    , type=float, required=False, default=0.0)
     parser.add_argument('--isoY'  , dest='isoY'    , type=float, required=False, default=0.0)
@@ -81,6 +81,7 @@ def main(dir, args):
     parser.add_argument('--machine'     , dest='machine'    , type=str  , required=False, nargs='?', default='Gantry')
     parser.add_argument('--dosimeter'   , dest='dosimeter'  , type=str  , required=False, nargs='?', default='NP'    )
     parser.add_argument('--tuneid'      , dest='tuneid'     , type=str  , required=False, nargs='?', default='Tune'  )
+    parser.add_argument('--gangle'      , dest='gangle'     , type=int  , required=False, nargs='?', default=0       )
     args = parser.parse_args(args)
 
     # Check output dir
@@ -331,7 +332,7 @@ def main(dir, args):
             icpoi.ControlPointIndex = i*2 + j
             icpoi.NominalBeamEnergy = str(energy)
             if j == 0:
-                icpoi.GantryAngle = 0
+                icpoi.GantryAngle = args.gangle
                 icpoi.GantryRotationDirection = 'NONE'
                 icpoi.BeamLimitingDeviceAngle = 0
                 icpoi.BeamLimitingDeviceRotationDirection = 'NONE'
