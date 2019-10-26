@@ -1,9 +1,9 @@
-#ifndef RTI_GEOMETRY_HH
-#define RTI_GEOMETRY_HH
+#ifndef RTI_GEOMETRY_HPP
+#define RTI_GEOMETRY_HPP
 
 /// \file
 ///
-/// RT-Ion geometry 
+/// RT-Ion geometry
 
 #include <string>
 #include <map>
@@ -18,20 +18,20 @@ namespace rti{
 /// Enumerate for geometry type
 /// \note many of these are not supported yet.
 typedef enum{
-    SNOUT        , 
-    RANGESHIFTER , 
-    COMPENSATOR  , 
-    BLOCK        , 
-    BOLI         , 
-    WEDGE        , 
-    TRANSFORM    , 
-    MLC          , 
-    PATIENT      , 
+    SNOUT        ,
+    RANGESHIFTER ,
+    COMPENSATOR  ,
+    BLOCK        ,
+    BOLI         ,
+    WEDGE        ,
+    TRANSFORM    ,
+    MLC          ,
+    PATIENT      ,
     DOSEGRID     ,
     UNKNOWN1     ,
     UNKNOWN2     ,
     UNKNOWN3     ,
-    UNKNOWN4     
+    UNKNOWN4
 } geometry_type;
 
 
@@ -40,7 +40,7 @@ typedef enum{
 class geometry {
 
 public:
-    
+
     const rti::vec3<float>   pos ; ///< position, public access
     const rti::mat3x3<float> rot ; ///< rotation, public access
     const geometry_type  geotype ; ///< geometry type, public access
@@ -51,9 +51,9 @@ public:
     geometry(
         rti::vec3<float>& p_xyz,
         rti::mat3x3<float>& rot_xyz,
-        rti::geometry_type t) 
-    : pos(p_xyz), 
-      rot(rot_xyz), 
+        rti::geometry_type t)
+    : pos(p_xyz),
+      rot(rot_xyz),
       geotype(t)
     {;}
 
@@ -63,9 +63,9 @@ public:
     geometry(
         const rti::vec3<float>& p_xyz,
         const rti::mat3x3<float>& rot_xyz,
-        const rti::geometry_type t) 
-    : pos(p_xyz), 
-      rot(rot_xyz), 
+        const rti::geometry_type t)
+    : pos(p_xyz),
+      rot(rot_xyz),
       geotype(t)
     {;}
 
@@ -74,11 +74,11 @@ public:
     : geotype(rhs.geotype),
       pos(rhs.pos),
       rot(rhs.rot)
-    {;} 
+    {;}
 
     /// Assignment operator
     const geometry&
-    operator= 
+    operator=
     (const rti::geometry& rhs)
     {
         return rhs;
@@ -88,7 +88,7 @@ public:
     ~geometry(){;}
 
     /// Prints geometry information
-    virtual void 
+    virtual void
     dump()
     const
     {;}
