@@ -142,7 +142,7 @@ public:
     {
         const gdcm::Dicts& dicts = gdcm::Global::GetInstance().GetDicts();
 
-        if(!include_sq) {ds_lut_.clear() ;return;}
+        if(!include_sq) {return;}
 
         for(auto el = gdcm_ds_.Begin(); el != gdcm_ds_.End() ; ++el){
             /// el->getValue() doesn't guarantee it has value.
@@ -239,7 +239,16 @@ public:
     }
 
     /// Destructor
-    ~dataset(){;}
+    ~dataset(){
+        for(auto& i : ds_lut_) {
+            for(auto& j : std::get<2>(i))
+            {
+                delete j;
+            }
+            std::get<2>(i).clear();
+        }
+        ds_lut_.clear();
+    }
 
     /// Print out all DataElement in this dataset resursively.
     void
