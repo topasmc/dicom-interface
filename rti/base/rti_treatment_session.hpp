@@ -64,7 +64,7 @@ public:
         gdcm::Reader reader;
         reader.SetFileName(file_for_tx_machine.c_str());
         const bool is_file_valid = reader.Read();
-        if(!is_file_valid) throw std::runtime_error("Invalid DICOM file is given to treatment_session.");
+        if(!is_file_valid) throw std::runtime_error("Invalid DICOM file " + file_for_tx_machine + " is given to treatment_session.");
 
         gdcm::MediaStorage ms;
         ms.SetFromFile(reader.GetFile());
