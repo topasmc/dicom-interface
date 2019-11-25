@@ -140,6 +140,11 @@ public:
         std::string machine_name,
         std::string mc_code)
     {
+        if(tx_machine_)
+        {
+            throw std::runtime_error("Preexisting machine.");
+        }
+
         std::cout<<"machine_name: "<<machine_name<<", mc_code: "<<mc_code<<std::endl;
 
         if( !machine_name.compare("rbe:1.1"))
@@ -154,7 +159,10 @@ public:
     }
 
     /// Default destructor
-    ~treatment_session(){;}
+    ~treatment_session(){
+        delete tx_machine_;
+        delete rti_ds_;
+    }
 
    /*
     const
