@@ -354,7 +354,7 @@ def main(dir, args):
                 icpoi.GantryPitchRotationDirection = 'NONE'
                 icpoi.SnoutPosition      = args.snPos
             icpoi.ScanSpotTuneID = args.tuneid
-            icpoi.NumberofScanSpotPositions = 1
+            icpoi.NumberOfScanSpotPositions = 1
             icpoi.ScanSpotPositionMap = [0.0, 0.0]
             icpoi.ScanSpotMetersetWeights = 1e9 if j == 0 else 0
             cweight += icpoi.ScanSpotMetersetWeights
