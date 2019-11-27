@@ -140,10 +140,35 @@ public:
     /// Returns data
     /// \return data_
     /// \note why not const std::valarray<T>? 
-    std::valarray<T> get_data() const 
+    const
+    std::valarray<T>& get_data() const 
     //const std::valarray<T> get_data() const 
     {
         return data_;
+    }
+
+    /// Returns x center positions
+    /// \return x_
+    const
+    R* get_x() const
+    {
+        return x_;
+    }
+
+    /// Returns y center positions
+    /// \return y_
+    const
+    R* get_y() const
+    {
+        return y_;
+    }
+
+    /// Returns z center positions
+    /// \return z_
+    const
+    R* get_z() const
+    {
+        return z_;
     }
 
     
