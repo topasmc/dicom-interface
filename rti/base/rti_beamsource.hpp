@@ -60,13 +60,13 @@ public:
 
     /// Returns size of beamlets.
     /// \return total number of beamlets
-    const std::size_t
+    std::size_t
     total_beamlets()
     {return beamlets_.size();}
 
     /// Returns total number of histories
     /// \return total number of histories
-    const std::size_t
+    std::size_t
     total_histories()
     {    
         return this->total_beamlets() == 0 ? 
