@@ -46,8 +46,8 @@ public:
     {;}
     */
     
-    /// Default destructor
-    ~treatment_machine(){;}
+    /// Virtual destructor of abstract class
+    virtual ~treatment_machine(){;}
 
     /// Returns beamline model 
     /// \param ds : pointer of dataset
