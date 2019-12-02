@@ -155,7 +155,6 @@ public:
         }else{
             throw std::runtime_error("Valid machine is not available.");
         }
-        return false;
     }
 
     /// Default destructor
