@@ -107,10 +107,19 @@ public:
             }
 
             std::vector<std::string> in ; beam_ds->get_values("InstitutionName", in);
-            std::vector<std::string> bn ; beam_ds->get_values("TreatmentMachineName" , bn);
+            std::vector<std::string> tn ; beam_ds->get_values("TreatmentMachineName" , tn);
 
-            machine_name_ = rti::trim_copy(in[0]) + ":" + rti::trim_copy(bn[0]);
-
+            if(in.size()>0)
+            {
+                machine_name_ += rti::trim_copy(in[0]);
+                if(tn.size()>0) {
+                    machine_name_ +=  ":";
+                }
+            }
+            if(tn.size()>0)
+            {
+                machine_name_ += rti::trim_copy(tn[0]);
+            }
         }else{
             machine_name_ = m_name;
         }
