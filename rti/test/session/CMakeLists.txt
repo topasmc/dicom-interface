@@ -30,19 +30,14 @@ link_directories (${GDCM_DIR} )
 target_link_libraries(treatment_session
     ${COREFOUNDATION_LIBRARY}
     gdcmCommon
-    gdcmDSED     
-    gdcmMEXD     
-    gdcmcharls   
-    gdcmjpeg12   
-    gdcmjpeg8    
-    gdcmuuid     
-    socketxx
-    gdcmDICT     
-    gdcmIOD      
-    gdcmMSFF     
-    gdcmexpat    
-    gdcmjpeg16   
-    gdcmzlib   
+    gdcmDSED
+    gdcmMEXD
+    gdcmjpeg12
+    gdcmjpeg8
+    gdcmDICT
+    gdcmIOD
+    gdcmMSFF
+    gdcmjpeg16
 )
 
 
