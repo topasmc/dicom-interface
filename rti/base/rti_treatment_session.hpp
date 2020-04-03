@@ -162,7 +162,7 @@ public:
             tx_machine_ = new rti::rbe::rbe_1p1<T>;
             return true;
         }else{
-            throw std::runtime_error("Valid machine is not available.");
+            throw std::runtime_error("Valid machine " + machine_name + " is not available.");
         }
     }
 
