@@ -92,6 +92,10 @@ For more detail, please see this project's wiki page [https://github.com/topasmc
 
 This project is initiated by Massachusetts General Hospital and continuously supported by a NIH grant, TOPAS project (U24).
 
+## How to cite
+
+Please cite this paper: https://doi.org/10.1016/j.ejmp.2020.04.018
+
 ## License (TBD):
 
 This project is licensed under - see the LICENSE.md file for details.
