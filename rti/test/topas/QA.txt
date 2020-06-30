@@ -36,9 +36,9 @@ s:Ge/WaterPhantom/Parent="WaterPhantomTop"
 #Water: I-value 75 eV
 #G4_Water: I-value: 78, ICRU 75 +- 3 eV
 s:Ge/WaterPhantom/Material="G4_WATER"
-d:Ge/WaterPhantom/HLX= 17.5 cm
-d:Ge/WaterPhantom/HLY= 17.5 cm
-d:Ge/WaterPhantom/HLZ= 19 cm
+d:Ge/WaterPhantom/HLX= 5.0 cm
+d:Ge/WaterPhantom/HLY= 5.0 cm
+d:Ge/WaterPhantom/HLZ= 10 cm
 d:Ge/WaterPhantom/TransX = 0. cm
 d:Ge/WaterPhantom/TransY = 0. cm
 d:Ge/WaterPhantom/TransZ = Ge/WaterPhantom/HLZ  cm * -1.0
@@ -47,26 +47,17 @@ d:Ge/WaterPhantom/RotY = 0. deg
 d:Ge/WaterPhantom/RotZ = 0. deg
 s:Ge/WaterPhantom/Color = "blue"
 
-####################################################
-#----------------- DoseGrid --------------------
-####################################################
-#--- Dose grid in water phantom
-s:Ge/RTION/DoseGrid/Parent = "WaterPhantom"
-s:Ge/RTION/DoseGrid/Type   = "TsBox"
-#Voxel size and dimension are temporally set directly
-i:Ge/RTION/DoseGrid/XBins  = 175 #2.0 mm 
-i:Ge/RTION/DoseGrid/YBins  = 175 #2.0 mm
-i:Ge/RTION/DoseGrid/ZBins  = 190 #2.0 mm
+i:Ge/WaterPhantom/XBins  = 50  #2.0 mm 
+i:Ge/WaterPhantom/YBins  = 50  #2.0 mm
+i:Ge/WaterPhantom/ZBins  = 100 #2.0 mm
 
-d:Ge/RTION/DoseGrid/HLX = Ge/WaterPhantom/HLX cm
-d:Ge/RTION/DoseGrid/HLY = Ge/WaterPhantom/HLY cm
-d:Ge/RTION/DoseGrid/HLZ = Ge/WaterPhantom/HLZ cm
-
-#W.R.T PatientGroup
-d:Ge/RTION/DoseGrid/TransX     = 0.0 cm
-d:Ge/RTION/DoseGrid/TransY     = 0.0 cm
-d:Ge/RTION/DoseGrid/TransZ     = 0.0 cm
-d:Ge/RTION/DoseGrid/RotX       = 0 deg
-d:Ge/RTION/DoseGrid/RotY       = 0 deg 
-d:Ge/RTION/DoseGrid/RotZ       = 0 deg
-b:Ge/RTION/DoseGrid/IsParallel = "True"
+####################################################
+#----------------- Scorers --------------------
+####################################################
+s:Sc/DoseGrid_Dw/Quantity    = "DoseToWater"
+s:Sc/DoseGrid_Dw/Component   = "WaterPhantom" 
+s:Sc/DoseGrid_Dw/OutputFile  = "Dw" 
+s:Sc/DoseGrid_Dw/OutputType  = "binary" 
+s:Sc/DoseGrid_Dw/IfOutputFileAlreadyExists = "OverWrite" # Exit, Overwrite or Increment
+b:Sc/DoseGrid_Dw/PreCalculateStoppingPowerRatios = "True"
+b:Sc/DoseGrid_Dw/OutputToConsole = "FALSE"

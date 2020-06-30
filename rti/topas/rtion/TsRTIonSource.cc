@@ -47,9 +47,10 @@ TsRTIonSource::TsRTIonSource(TsParameterManager* pM,
     G4String rt_ion_file   = fPm->GetStringParameter(GetFullParmName("File"));
 	
     G4String machine_name = "";
-	if ( fPm->ParameterExists(GetFullParmName("machinename")) ){
-		machine_name = fPm->GetStringParameter(GetFullParmName("machinename")) ;	
-	}
+    
+    if ( fPm->ParameterExists(GetFullParmName("machinename")) ){
+        machine_name = fPm->GetStringParameter(GetFullParmName("machinename")) ;	
+    }
     
     rti_session_ =  
         std::unique_ptr<rti::treatment_session<float>>
@@ -58,9 +59,9 @@ TsRTIonSource::TsRTIonSource(TsParameterManager* pM,
     
     //ReadHistories will be accessed from RTIonSourceGenerator
     ReadHistories = std::bind(
-                        &TsRTIonSource::ReadHistoriesPerBeamlet, 
-                        this, 
-                        std::placeholders::_1);
+                              &TsRTIonSource::ReadHistoriesPerBeamlet, 
+                              this, 
+                              std::placeholders::_1);
 
     this->ResolveParameters();
 }
@@ -71,99 +72,99 @@ TsRTIonSource::~TsRTIonSource() {;}
 void TsRTIonSource::ResolveParameters(){
     
     /**
-    * Particle type: proton (default)
-    */
+     * Particle type: proton (default)
+     */
     if(fPm->ParameterExists(GetFullParmName("beamparticle"))){
         TsParticleDefinition resolvedDef = 
             fPm->GetParticleDefinition(fPm->GetStringParameter(GetFullParmName("beamparticle")));
         particle_definition_ = resolvedDef.particleDefinition;
         if (!particle_definition_)
-		    std::cerr << "Unknown particle type read from parameter = " << GetFullParmName("beamparticle") << std::endl;
+            std::cerr << "Unknown particle type read from parameter = " << GetFullParmName("beamparticle") << std::endl;
     }else{
         particle_definition_ = G4Proton::ProtonDefinition();
     }
     
     /**
-    * Beam id
-    * \brief beam number (required) or beam name (optional)
-    * If beam number is given, we ignore beam name.
-    * When, beam name is used primarily in your clinic, it is important not to use beam number.
-    * Because in paramter file chain, beam number might be defined elsewhere.
-    */
+     * Beam id
+     * \brief beam number (required) or beam name (optional)
+     * If beam number is given, we ignore beam name.
+     * When, beam name is used primarily in your clinic, it is important not to use beam number.
+     * Because in paramter file chain, beam number might be defined elsewhere.
+     */
     rti::beam_id_type beam_id = {rti::beam_id_type::NUM, 1};
-	if ( fPm->ParameterExists(GetFullParmName("beamnumber")) ){
-	    G4int bnb = fPm->GetIntegerParameter(GetFullParmName("beamnumber"));
+    if ( fPm->ParameterExists(GetFullParmName("beamnumber")) ){
+        G4int bnb = fPm->GetIntegerParameter(GetFullParmName("beamnumber"));
         beam_id.number = bnb;
-	}else{
-		if ( fPm->ParameterExists(GetFullParmName("beamname")) ){
-			G4String bname = fPm->GetStringParameter(GetFullParmName("beamname")) ;
+    }else{
+        if ( fPm->ParameterExists(GetFullParmName("beamname")) ){
+            G4String bname = fPm->GetStringParameter(GetFullParmName("beamname")) ;
             beam_id.type = rti::beam_id_type::STR;
             beam_id.name = bname.c_str();
-		}else{
-			std::cerr << " Neither BeamNumber nor BeamName was given." << std::endl;
-			exit(1);
-		}
-	}
+        }else{
+            std::cerr << " Neither BeamNumber nor BeamName was given." << std::endl;
+            exit(1);
+        }
+    }
 
     
     /**
-    * Export DICOM coordinate information and export as TOPAS parameters
-    */
+     * Export DICOM coordinate information and export as TOPAS parameters
+     */
     rti::coordinate_transform<float> rt_coordinate_dicom;
     switch(beam_id.type){
-        case rti::beam_id_type::NUM: 
-            rt_coordinate_dicom = rti_session_->get_coordinate(beam_id.number);
-            break;
-        case rti::beam_id_type::STR: 
-            rt_coordinate_dicom = rti_session_->get_coordinate(beam_id.name);
-            break;
+    case rti::beam_id_type::NUM: 
+        rt_coordinate_dicom = rti_session_->get_coordinate(beam_id.number);
+        break;
+    case rti::beam_id_type::STR: 
+        rt_coordinate_dicom = rti_session_->get_coordinate(beam_id.name);
+        break;
     }
     this->ExportDICOMCoordinateToParameters(rt_coordinate_dicom);
     std::cout<<"isocenter: " << std::endl;
     rt_coordinate_dicom.translation.dump();
 
     /**
-    * SID: source to isocenter distance
-    */
+     * SID: source to isocenter distance
+     */
     float sid_mm = 0.0*mm ;
     if(fPm->ParameterExists(GetFullParmName("sid"))){
         sid_mm = fPm->GetDoubleParameter(GetFullParmName("sid"), "Length")/mm;
     }
 
     /**
-    * patient's position information & dosegrid
-    */
-	G4String transValue    ;
-	G4String parameterName ;
+     * patient's position information & dosegrid
+     */
+    G4String transValue    ;
+    G4String parameterName ;
 
-	if ( fPm->ParameterExists(GetFullParmName("imgdirectory"))){
+    if ( fPm->ParameterExists(GetFullParmName("imgdirectory"))){
         //Writing img center should come before readign TransX/Y/Z
-		G4String image_dir = fPm->GetStringParameter(GetFullParmName("imgdirectory"));
+        G4String image_dir = fPm->GetStringParameter(GetFullParmName("imgdirectory"));
 
-		struct stat s;
-		if (stat(image_dir.c_str(), &s) == 0) //exist
-		{
-			//check imgdirectory is DIR 
-			(s.st_mode & S_IFDIR) ? true : throw std::runtime_error("Error: ImgDirectory should be a directory");
+        struct stat s;
+        if (stat(image_dir.c_str(), &s) == 0) //exist
+            {
+                //check imgdirectory is DIR 
+                (s.st_mode & S_IFDIR) ? true : throw std::runtime_error("Error: ImgDirectory should be a directory");
 			
-			//check # of files in the directory
-			DIR* dir = opendir(image_dir.c_str());
-			size_t files = 0;
-			struct dirent* ent ;
-			while(ent = readdir(dir)) files++;
-			closedir(dir);
-			if(files>2){ // . and .. are counted.
-				rti::ct<float> patient_ct(image_dir);
-				auto ct_center = patient_ct.get_center();
-                this->Wrap3Vector(ct_center, "ImgCenter", "mm");
-			}
-		}
-	}
+                //check # of files in the directory
+                DIR* dir = opendir(image_dir.c_str());
+                size_t files = 0;
+                struct dirent* ent ;
+                while(ent = readdir(dir)) files++;
+                closedir(dir);
+                if(files>2){ // . and .. are counted.
+                    rti::ct<float> patient_ct(image_dir);
+                    auto ct_center = patient_ct.get_center();
+                    this->Wrap3Vector(ct_center, "ImgCenter", "mm");
+                }
+            }
+    }
     
     /**
-    * Updated coordinate from TOPAS UI
-    * Rotation of Gantry, Coli, Patient support, and iso-center shift
-    */
+     * Updated coordinate from TOPAS UI
+     * Rotation of Gantry, Coli, Patient support, and iso-center shift
+     */
     rti::vec3<float> p_xyz;
     p_xyz.x = static_cast<float> (fPm->GetDoubleParameter(GetFullParmName("ShiftX"), "Length")/mm);
     p_xyz.y = static_cast<float> (fPm->GetDoubleParameter(GetFullParmName("ShiftY"), "Length")/mm);
@@ -192,36 +193,36 @@ void TsRTIonSource::ResolveParameters(){
     rt_coordinate_topas.rotation.dump();
 
     /**
-    * Particles per history
-    * 
-    */    
+     * Particles per history
+     * 
+     */    
     G4double particles_per_history = fPm->GetUnitlessParameter(GetFullParmName("particlesperhistory"));
     assert( (particles_per_history==0) || (particles_per_history==-1) || (particles_per_history>0) );
 
     switch(beam_id.type){
         case rti::beam_id_type::NUM: 
             beam_source_ = rti_session_->get_beamsource(
-                            beam_id.number,
-                            rt_coordinate_topas,
-                            particles_per_history,
-                            sid_mm
-                            );
+                                                    beam_id.number,
+                                                    rt_coordinate_topas,
+                                                    particles_per_history,
+                                                    sid_mm
+                                                    );
 
             break;
         case rti::beam_id_type::STR: 
             beam_source_ = rti_session_->get_beamsource(
-                            beam_id.name,
-                            rt_coordinate_topas,
-                            particles_per_history,
-                            sid_mm
-                            );
+                                                    beam_id.name,
+                                                    rt_coordinate_topas,
+                                                    particles_per_history,
+                                                    sid_mm
+                                                    );
             break;
     }
 
     /**
-    * Set Beamlet range to be simulated. 
-    * By default, starts with first beamlet (id=1) and ends with last beamlets
-    */    
+     * Set Beamlet range to be simulated. 
+     * By default, starts with first beamlet (id=1) and ends with last beamlets
+     */    
     if(fPm->ParameterExists(GetFullParmName("beamletrange"))){ 
 
         if( fPm->GetVectorLength(GetFullParmName("beamletrange")) != 2){
@@ -244,8 +245,8 @@ void TsRTIonSource::ResolveParameters(){
 
     counter_.current = counter_.start;
     fNumberOfHistoriesInRun = std::get<2>(beam_source_[counter_.stop]) 
-                            - std::get<2>(beam_source_[counter_.start])
-                            + std::get<1>(beam_source_[counter_.start]);
+        - std::get<2>(beam_source_[counter_.start])
+        + std::get<1>(beam_source_[counter_.start]);
     std::cout<<"Total number of histories to be simulated from RTIonSource: " << fNumberOfHistoriesInRun 
              <<", Total number of beamlets: "<< beam_source_.total_beamlets() << std::endl;
     
@@ -264,22 +265,19 @@ G4bool TsRTIonSource::ReadHistoriesPerBeamlet(std::queue<TsPrimaryParticle>* par
 
     while(histories_of_beamlet--){
         
-        auto history   = beamlet_distribution();
-        auto energy    = std::get<0>(history);
-        auto pos       = std::get<1>(history);
-        auto momentum  = std::get<2>(history);
-        
+        auto h   = beamlet_distribution();
+
         TsPrimaryParticle p;
         p.particleDefinition = particle_definition_; 
 
-        p.posX = pos.x; 
-        p.posY = pos.y;
-        p.posZ = pos.z;
+        p.posX = h.pos.x; 
+        p.posY = h.pos.y;
+        p.posZ = h.pos.z;
         
-        p.dCos1 = momentum.x ;
-        p.dCos2 = momentum.y ;
-        p.dCos3 = momentum.z ;
-        p.kEnergy         = energy;
+        p.dCos1 = h.dir.x ;
+        p.dCos2 = h.dir.y ;
+        p.dCos3 = h.dir.z ;
+        p.kEnergy         = h.ke;
         p.weight          = 1;
         p.isNewHistory    = true;
         p.isOpticalPhoton = false;

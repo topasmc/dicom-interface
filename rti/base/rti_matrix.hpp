@@ -73,6 +73,8 @@ public:
         xx(1.0),xy(0),xz(0),
         yx(0),yy(1.0),yz(0),
         zx(0),zy(0),zz(1.0){
+	//this routine may need a sequence of rotation,
+	//e.g., x->y->z, y->x->z, etc. a total of 12
         if (x != 0) this->rotate_x(x);
         if (y != 0) this->rotate_y(y);
         if (z != 0) this->rotate_z(z);
@@ -90,9 +92,124 @@ public:
         if (z != 0) this->rotate_z(z);
     }
 
+    //Calculate rotation matrix from two vectors, from (f) and to (t).
+    //the matrix rotates f and aligns t.
+    // f and t are normalized one
+	/*
+    CUDA_HOST_DEVICE
+    mat3x3
+	(rti::vec3<T>& f, 
+	 rti::vec3<T>& t)
+    {
+		f.normalize();
+		t.normalize();
+		printf("here\n");
+		rti::vec3<T> v = f.cross(t);
+		rti::vec3<T> u  = v / v.norm();
+		T c = f.dot(t);
+		T h = 1-c/1-c*c;
+
+		xx = c + h * v.x * v.x   ;
+		xy = h * v.x * v.y - v.z ;
+		xz = h * v.x * v.z + v.y ;
+		yx = h * v.x * v.y + v.z ;
+		yy = c + h * v.y * v.y   ;
+		yz = h * v.y * v.z - v.x ;
+		zx = h * v.x * v.z - v.y ;
+		zy = h * v.y * v.z + v.x ;
+		zz = c + h * v.z * v.z   ;
+		//calculat euler angle x->y->z sequence
+    }
+	*/
+	
+    //expecting normalized vectors, f and t
+    CUDA_HOST_DEVICE
+    mat3x3
+	(const rti::vec3<T>& f, 
+	 const rti::vec3<T>& t)
+    {
+		///< a matrix aligns vector (f) to vector (t)
+		///< by Moller & Hughe, 1999
+		rti::vec3<T> v = f.cross(t);
+		T c = 1 ;
+		T h = 0 ;
+		if ( v.norm() <= 0.0001 ) {
+			v.x = 0 ;
+			v.y = 0 ;
+			v.z = 0 ;
+		}else{
+			v.normalize();
+			c = f.dot(t);
+			h = (1.0-c)/(1.0-c*c);
+		}
+				
+		xx = c + h * v.x * v.x   ;
+		xy = h * v.x * v.y - v.z ;
+		xz = h * v.x * v.z + v.y ;
+		yx = h * v.x * v.y + v.z ;
+		yy = c + h * v.y * v.y   ;
+		yz = h * v.y * v.z - v.x ;
+		zx = h * v.x * v.z - v.y ;
+		zy = h * v.y * v.z + v.x ;
+		zz = c + h * v.z * v.z   ;
+
+    }
+
     CUDA_HOST_DEVICE
     ~mat3x3(){;}
 
+    
+    CUDA_HOST
+    rti::vec3<T>
+    euler_xyz(bool y_is_2nd_quad=false){
+	//R_z(phi)*R_y(theta)*R_x(psi)
+	//psi_th_phi.x = psi
+	//psi_th_phi.y = th
+	//psi_th_phi.z = phi
+	rti::vec3<T> psi_th_phi;
+	
+	if( zx > -1.0 && zx < 1.0 ){ //zx neq -1 or 1
+	    T psi[2], th[2], phi[2];
+	    th[0] = -1.0 * std::asin(zx);
+	    th[1] = M_PI - th[0];
+	    psi[0] = std::atan2(zy/std::cos(th[0]), zz/std::cos(th[0]));
+		psi[1] = std::atan2(zy/std::cos(th[1]), zz/std::cos(th[1]));
+	    phi[0] = std::atan2(yx/std::cos(th[0]), xx/std::cos(th[0]));
+		phi[1] = std::atan2(yx/std::cos(th[1]), xx/std::cos(th[1]));
+
+	    if ( th[0] > 0 && th[0] < M_PI*0.5 ){
+		psi_th_phi.x = psi[0];
+	        psi_th_phi.y =  th[0];
+	        psi_th_phi.z = phi[0];
+	    }else{
+		psi_th_phi.x = psi[1];
+	        psi_th_phi.y =  th[1];
+	        psi_th_phi.z = phi[1];
+	    }
+	    //
+	    //psi_th_phi.x = psi[y_is_2nd_quad];
+	    //psi_th_phi.y =  th[y_is_2nd_quad];
+	    //psi_th_phi.z = phi[y_is_2nd_quad];
+	}else{
+	    std::cout<<"here\n";//never get here
+	    psi_th_phi.z = 0.0 ; 
+	    if ( zx == -1.0  ){//zx = -1
+		psi_th_phi.x = psi_th_phi.z + std::atan2(xy, xz);
+		psi_th_phi.y = M_PI * 0.5 ; 
+	    }else{
+		psi_th_phi.x = -1.0 * psi_th_phi.z + std::atan2(-1.0*xy, -1.0*xz);
+		psi_th_phi.y = -1.0 * M_PI * 0.5 ;
+	    }
+	}
+	
+        #if defined(__CUDACC__)
+		
+	#else
+	
+	#endif
+	return psi_th_phi;
+    }
+    
     CUDA_HOST_DEVICE
     mat3x3& 
     rotate_x(T a){

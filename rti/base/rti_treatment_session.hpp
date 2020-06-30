@@ -14,6 +14,11 @@
 #include <rti/base/rti_utils.hpp>
 #include <rti/base/rti_treatment_machine.hpp>
 #include <rti/base/rti_ct.hpp>
+//generic treatment machine
+#include <rti/base/rti_treatment_machine_pbs.hpp>
+
+
+//Custom treatment machines
 #include <rti/treatment_machines/rbe/rbe_1p1.hpp>
 
 namespace rti {
@@ -45,7 +50,6 @@ protected:
     ///< top level DICOM dataset, either RTIP or RTIBTR
     rti::dataset* rti_ds_ = nullptr;
 
-
 public:
 
     /// Constructs treatment machine based on DICOM or specific file name.
@@ -58,13 +62,15 @@ public:
     treatment_session(
         std::string file_for_tx_machine, //for beamline and source,
         std::string m_name  = "",
-        std::string mc_code = "topas:3.2.0")
+        std::string mc_code = "topas:3.x")
     {
 
         gdcm::Reader reader;
+
         reader.SetFileName(file_for_tx_machine.c_str());
+        
         const bool is_file_valid = reader.Read();
-        if(!is_file_valid) throw std::runtime_error("Invalid DICOM file " + file_for_tx_machine + " is given to treatment_session.");
+        if(!is_file_valid) throw std::runtime_error("Invalid DICOM file is given to treatment_session.");
 
         gdcm::MediaStorage ms;
         ms.SetFromFile(reader.GetFile());
@@ -88,10 +94,8 @@ public:
             throw std::runtime_error("treatment_session does not supports given RTMODALITY");
         }
 
-        rti_ds_ = new rti::dataset(reader.GetFile().GetDataSet(), true);
-
+        rti_ds_   = new rti::dataset(reader.GetFile().GetDataSet(), true);
         seq_tags_ = &rti::seqtags_per_modality.at(mtype_);
-
 
         ///< machine name is set
         if( !m_name.compare("") ){
@@ -107,34 +111,30 @@ public:
             }
 
             std::vector<std::string> in ; beam_ds->get_values("InstitutionName", in);
-            std::vector<std::string> tn ; beam_ds->get_values("TreatmentMachineName" , tn);
+            std::vector<std::string> bn ; beam_ds->get_values("TreatmentMachineName" , bn);
 
-            if(in.size()>0)
+            if(in.size()>0 && bn.size()>0)
             {
-                machine_name_ += rti::trim_copy(in[0]);
-                if(tn.size()>0) {
-                    machine_name_ +=  ":";
-                }
+                machine_name_ = rti::trim_copy(in[0]) + ":" + rti::trim_copy(bn[0]);
             }
-            if(tn.size()>0)
+            else if(in.size()>0)
             {
-                machine_name_ += rti::trim_copy(tn[0]);
+                machine_name_ = rti::trim_copy(in[0]);
             }
+            else if(bn.size()>0)
+            {
+                machine_name_ = rti::trim_copy(bn[0]);
+            }
+
         }else{
             machine_name_ = m_name;
         }
-
-        std::transform(machine_name_.begin(),
-                       machine_name_.end(),
-                       machine_name_.begin(),
-                       ::tolower);
-
+	
         if (!this->create_machine(machine_name_, mc_code)){
             std::runtime_error("No MC machine is registered for "+machine_name_);
         }
 
     }
-
 
 
     /// Creates rti::machine and return true for sucessful creation or false.
@@ -145,30 +145,48 @@ public:
     ///  Looking for better way to determine during 'ideally' pre-processing.
     /// type_traits allows to branch the logic flow based on the type of variables.
     bool
-    create_machine(
-        std::string machine_name,
-        std::string mc_code)
+    create_machine
+	(std::string machine_name,
+     std::string mc_code)
     {
-        if(tx_machine_)
-        {
-            throw std::runtime_error("Preexisting machine.");
-        }
-
+		if(tx_machine_){
+				throw std::runtime_error("Preexisting machine.");
+		}
         std::cout<<"machine_name: "<<machine_name<<", mc_code: "<<mc_code<<std::endl;
+		const size_t deli = machine_name.find(":");
+		std::string site  = machine_name.substr(0, deli);
+        std::transform(site.begin(),site.end(),site.begin(),::tolower);
+        std::string model = machine_name.substr(deli+1,machine_name.size());
+        
+        if( site.compare("pbs")) std::transform(model.begin(), model.end(), model.begin(), ::tolower);
+        
+		std::cout<<site<< ":" << model <<"\n";
 
-        if( !machine_name.compare("rbe:1.1"))
-        {
-            std::cout<<"RBE:1.1 machine is created."<<std::endl;
-            tx_machine_ = new rti::rbe::rbe_1p1<T>;
-            return true;
-        }else{
-            throw std::runtime_error("Valid machine " + machine_name + " is not available.");
-        }
+		if( !site.compare("pbs") ){
+			//Generic PBS beam model
+			//expecting file
+			std::cout<<"Creating a generic PBS machine from : " << model << "\n";
+			tx_machine_ = new rti::pbs<T>(model);
+			return true;
+		}else if(!site.compare("rbe") ){
+			if ( !model.compare("1.1") ){
+				tx_machine_ = new rti::rbe::rbe_1p1<T>;
+				return true;
+			}
+       	    else{
+				throw std::runtime_error("Valid machine is not available.");
+			}
+
+		}else{
+			throw std::runtime_error("Valid site is not available.");
+		}
+
+        return false;
     }
 
     /// Default destructor
     ~treatment_session(){
-        delete tx_machine_;
+	delete tx_machine_;
         delete rti_ds_;
     }
 
@@ -180,7 +198,6 @@ public:
         return dosegrid_;
     }
     */
-
 
    /// Returns a list of beam names present in the plan file.
    std::vector<std::string>
@@ -207,7 +224,7 @@ public:
         for(auto i : bseq){
             std::vector<std::string> bn ;
             i->get_values("BeamName" , bn); //works for RTIP & RTIBTR
-            assert(bn.size()>0);
+            if(bn.size()==0) continue;
             if (bnm == rti::trim_copy(bn[0])) {
                 return i ;
             }
@@ -256,11 +273,11 @@ public:
     /// \return beamsource object.
     template<typename S>
     rti::beamsource<T>
-    get_beamsource(
-        S beam_id,
-        const rti::coordinate_transform<T> coord,
-        float scale,
-        T     sid)
+    get_beamsource
+	( S beam_id,
+      const rti::coordinate_transform<T> coord,
+      float scale,
+      T     sid)
     {
         return  tx_machine_->create_beamsource(
                     this->get_beam_dataset(beam_id),
@@ -270,6 +287,16 @@ public:
                     sid);
     }
 
+   /// Gets time line object for given beam id, e.g., beam name or number
+   /// \param beam_id
+   template<typename S>
+   std::map<T, int32_t>
+   get_timeline(S beam_id)
+   {
+       return tx_machine_->create_timeline(
+           this->get_beam_dataset(beam_id),
+           mtype_);
+   }
 
     /// Gets beam coordinate object for given beam id, e.g, beam name or beam number
     /// \param beam_id for beam number or beam name
@@ -282,8 +309,6 @@ public:
             mtype_);
     }
 
-
-
     /// Summarize plan
     /// \param bnb for beam number
     void
@@ -292,13 +317,13 @@ public:
         rti_ds_->dump();
     }
 
-
     /// Return ion type
     /// \return rti::m_type_
     rti::modality_type
     get_modality_type(void){
         return     mtype_  ;
     }
+
 };
 
 }

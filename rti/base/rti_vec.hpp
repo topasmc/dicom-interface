@@ -37,7 +37,8 @@ public:
     CUDA_HOST_DEVICE
     vec2(const vec2& ref ): x(ref.x), y(ref.y){;}
 
-    CUDA_HOST_DEVICE
+	
+    CUDA_HOST
     vec2(const std::array<T,2>& ref ): x(ref[0]), y(ref[1]){;}
     //#endif
 
@@ -52,6 +53,17 @@ public:
     T norm()const{return std::sqrt(x*x+y*y);}
     #endif
 
+    CUDA_HOST_DEVICE
+    T dot(const vec2<T>& v)const{
+	return x*v.x + y*v.y;
+    }
+
+    //cross product of 2d vec is scalar
+    CUDA_HOST_DEVICE
+    T
+    cross(const vec2<T>& v)const{
+	return x*v.y - y*v.x;
+    }
 
     CUDA_HOST_DEVICE
     vec2<T>&
@@ -98,11 +110,7 @@ public:
 
     CUDA_HOST_DEVICE
     void dump() const {
-        #if defined(__CUDACC__)
-        printf("x,y %f, %f, %f\n", x,y);
-        #else
-        std::cout<<"x,y: ("<< x <<", " << y <<") " << std::endl;
-        #endif
+		printf("(x,y): (%f, %f)\n", x,y);
     }
 
 };
@@ -135,13 +143,12 @@ public:
     CUDA_HOST_DEVICE
     vec3(const vec3& ref ): x(ref.x), y(ref.y), z(ref.z){;}
 
-    CUDA_HOST_DEVICE
+    CUDA_HOST
     vec3(const std::array<T,3>& ref ): x(ref[0]), y(ref[1]), z(ref[2]){;}
 
     CUDA_HOST_DEVICE
     vec3(const T* ref ): x(ref[0]), y(ref[1]), z(ref[2]){;}
-    //#endif
-
+    
     CUDA_HOST_DEVICE
     ~vec3(){;}
 
@@ -151,6 +158,24 @@ public:
     T norm()const{return sqrtf(x*x+y*y+z*z);}
     #else
     T norm()const{return std::sqrt(x*x+y*y+z*z);}
+    #endif
+
+    CUDA_HOST_DEVICE
+    #if defined(__CUDACC__)
+    //sqrtf : for float, sqrtg: for double
+    void normalize(){
+      T n = sqrtf(x*x+y*y+z*z);
+      x /= n;
+      y /= n;
+      z /= n;
+    }
+    #else
+    void normalize(){
+      T n = std::sqrt(x*x+y*y+z*z);
+      x /= n;
+      y /= n;
+      z /= n;
+    }
     #endif
     
     CUDA_HOST_DEVICE
@@ -187,6 +212,34 @@ public:
     }
 
     CUDA_HOST_DEVICE
+    vec3<T> 
+    operator * 
+    (const T& r){
+        return vec3<T>(
+            x * r,
+            y * r,
+            z * r
+        );
+    }
+  
+    CUDA_HOST_DEVICE
+    vec3<T> 
+    operator /
+    (const T& r)const{
+        return vec3<T>(
+            x / r,
+            y / r,
+            z / r
+        );
+    }
+
+    CUDA_HOST_DEVICE
+    T dot(
+	  const vec3<T>& v)const{
+	return x*v.x + y*v.y + z*v.z;
+    }
+
+    CUDA_HOST_DEVICE
     vec3<T>
     cross
     (const vec3<T>& r) const {
@@ -206,17 +259,21 @@ public:
         return *this;
     }
 
-    CUDA_HOST
+	CUDA_HOST_DEVICE
+	vec3<T>&
+	operator+=
+	(const vec3<T>& r){
+        x += r.x ; y += r.y; z += r.z;
+        return *this;
+    }
+
+    CUDA_HOST_DEVICE
     void dump() const {
-        #if defined(__CUDACC__)
-        /*
-        printf("xx,xy,xz %f, %f, %f\n", xx,xy, xz);
-        printf("yx,yy,yz %f, %f, %f\n", yx,yy, yz);
-        printf("zx,zy,zz %f, %f, %f\n", zx,zy, zz);
-        */
-        #else
+#if defined(__CUDACC__)
+        printf("x,y,z: (%f, %f, %f)\n", x,y,z);
+#else
         std::cout<<"x,y,z: ("<< x <<", " << y <<", " << z <<") " << std::endl;
-        #endif
+#endif
     }
 };
 
@@ -253,7 +310,7 @@ public:
     CUDA_HOST_DEVICE
     vec4(const T* ref ): x(ref[0]), y(ref[1]), z(ref[2]), s(ref[3]) {;}
 
-    CUDA_HOST_DEVICE
+    CUDA_HOST
     vec4(const std::array<T,4>& ref ): x(ref[0]), y(ref[1]), z(ref[2]), s(ref[3]) {;}
     //#endif
 
@@ -304,17 +361,10 @@ public:
         );
     }
 
-    CUDA_HOST
-    void dump() const {
-        #if defined(__CUDACC__)
-        /*
-        printf("xx,xy,xz %f, %f, %f\n", xx,xy, xz);
-        printf("yx,yy,yz %f, %f, %f\n", yx,yy, yz);
-        printf("zx,zy,zz %f, %f, %f\n", zx,zy, zz);
-        */
-        #else
-        std::cout<<"x,y,z,s: ("<< x <<", " << y <<", " << z <<", " << s<<") " << std::endl;
-        #endif
+    CUDA_HOST_DEVICE
+    void dump() const
+	{
+        printf("(x,y,z,s): (%f, %f, %f)\n",x,y,z,s);
     }
 };
 

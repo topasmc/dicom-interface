@@ -6,12 +6,9 @@
 # Target scoring 
 ###################################################
 
-#includeFile = MCAUTO_RTION.txt 
+includeFile = inputs.txt 
 
 i:Ts/MaxInterruptedHistories = 1000
-
-#Bertini cascade model
-Ph/Default/Modules = 6 "g4em-standard_opt4" "g4h-phy_QGSP_BERT_HP" "g4decay" "g4ion-binarycascade" "g4h-elastic_HP" "g4stopping"
 
 ###################################################
 #----------------- World volume  ------------------
@@ -64,17 +61,13 @@ s:Ma/RS_Lucite/DefaultColor="grey"
 ###################################################
 # RTION is a group of geometries specified in RTION plan file
 # BeamNumber or BeamName can pick the one
-# Because TOPAS rotates X first, Y and then Z
-# Rotating X -> align to DICOM coordinate -> So need to rotate around Z for DICOM
-# And then move along x,y,z with respect to mother volume
-# Initial beam geometry is IEC coordinate
 
 s:Ge/RTION/Parent      = "IEC_F" 
 s:Ge/RTION/Type        = "TsRTIonComponents"
-s:Ge/RTION/File        = "../../treatment_machines/rbe/rtip_demo.dcm"
-i:Ge/RTION/BeamNumber  = 1 
-s:Ge/RTION/BeamName    = "beam0"
-s:Ge/RTION/ImgDirectory = "" 
+s:Ge/RTION/File        = Rt/RTION/PlanFile 
+i:Ge/RTION/BeamNumber  = Rt/RTION/BeamNumberToBeSimulated 
+#s:Ge/RTION/BeamName   = Rt/RTION/BeamNameToBeSimulated
+s:Ge/RTION/ImgDirectory = Rt/RTION/CTDirectory
 
 #
 #RotCollimator/Gantry/PatientSupport/IEC2DICOM are RTION specific
@@ -94,11 +87,12 @@ s:Ge/RTION/Block/Material        = "G4_BRASS"
 s:Ge/RTION/Compensator/Material  = ""
 s:Ge/RTION/Snout/Material        = ""
 
-b:Ge/QuitIfOverlapDetected       = "F"
+b:Ge/QuitIfOverlapDetected       = "T"
 b:Ge/RTION/IsParallel            = "F"
 b:Ge/RTION/Include               = "T"
 
 # Changeable Parameters for setting other components
+# TOPAS extension will set up these parameters on-the-fly
 dc:Ge/RTION/IsoCenterX  = 0 mm
 dc:Ge/RTION/IsoCenterY  = 0 mm
 dc:Ge/RTION/IsoCenterZ  = 0 mm
@@ -109,7 +103,6 @@ dc:Ge/RTION/PatientSupportAngle = 0 deg
 dc:Ge/RTION/Iec2DicomAngle      = 0 deg
 
 # Optional parameters
-b:Ge/RTION/IncludeDoseGridIfExist     = "F" 
 b:Ge/RTION/IncludeSnoutIfExist        = "T"
 b:Ge/RTION/IncludeRangeshifterIfExist = "T"
 b:Ge/RTION/IncludeBlockIfExist        = "T"
@@ -122,9 +115,9 @@ b:Ge/RTION/IncludeCompensatorIfExist  = "T"
 # Right handed coordinate
 s:So/RTION/Type        = "TsRTIonSource" 
 s:So/RTION/Component   = "IEC_F"
-s:So/RTION/File        = "../../treatment_machines/rbe/rtip_demo.dcm"
-i:So/RTION/BeamNumber  = 1 
-s:So/RTION/BeamName    = "beam0"
+s:So/RTION/File        = Rt/RTION/PlanFile 
+i:So/RTION/BeamNumber  = Rt/RTION/BeamNumberToBeSimulated
+#s:So/RTION/BeamName   = Rt/RTION/BeamNameToBeSimulated
 d:So/RTION/SID         = 39.0 cm #source to isocenter distance. 
 
 # Translation w.r.t mother volume
@@ -150,8 +143,7 @@ dc:So/RTION/Iec2DicomAngle      = 0 deg
 dc:So/RTION/GantryAngle         = 0 deg
 dc:So/RTION/PatientSupportAngle = 0 deg
 
-u:So/RTION/ParticlesPerHistory = -1 
-b:So/RTION/NormalizeHistoriesPerDose = "T" #not yet implemented
+u:So/RTION/ParticlesPerHistory = Rt/RtION/ParticlesPerHistory
 
 i:Ts/ShowHistoryCountAtInterval = 10000
 b:Ts/ShowCPUTime = "T"

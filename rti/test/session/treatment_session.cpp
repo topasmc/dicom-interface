@@ -16,10 +16,6 @@ typedef float phase_space_type;
 void describe(const rti::dataset* beam);
 void describe_rtibtr(const rti::dataset* beam);
 
-template<class T>
-void generator(rti::beamlet<T>& bl, size_t thread_id, size_t n_histories);
-
-
 int main(int argc, char** argv){
     
     rti::cli_beam_read cl_opts;
@@ -131,7 +127,7 @@ int main(int argc, char** argv){
              << ", total history:"
              << beam_src.total_histories()<< std::endl;
 
-    std::queue< std::tuple<phase_space_type, rti::vec3<phase_space_type>, rti::vec3<phase_space_type>> > histories;
+    std::queue< rti::vertex_t<phase_space_type> > histories;
 
     
     for(size_t current_id = start_id ; current_id < end_id ; ++current_id){
@@ -140,13 +136,9 @@ int main(int argc, char** argv){
         size_t histories_of_beamlet = std::get<1>(beamlet);
 
         while(histories_of_beamlet--){
-            auto history = beamlet_distribution();
-            histories.push(history);
+            auto h = beamlet_distribution();
+            histories.push(h);
         }
-        
-	
-	
-
     }
 
     std::cout<<"Number of of histories in queue: "<< histories.size() << std::endl;
@@ -162,49 +154,16 @@ int main(int argc, char** argv){
         std::ostream& out = cl_opts["--output"][0].compare("") ? output : std::cout;
 
         while(!histories.empty()){
-            auto history   = histories.front();
-            auto energy    = std::get<0>(history);
-            auto pos       = std::get<1>(history);
-            auto momentum  = std::get<2>(history);
-            out<< pos.x <<" "<< pos.y <<" "<< pos.z<< " " 
-               << momentum.x << " " << momentum.y << " " << momentum.z << " "
-               << energy << std::endl;
+            auto h   = histories.front();
+            out<< h.pos.x <<" "<< h.pos.y <<" "<< h.pos.z<< " " 
+               << h.dir.x << " " << h.dir.y << " " << h.dir.z << " "
+               << h.ke << std::endl;
             histories.pop();
         }
     }
 
-    
-
-
     return 0;
-}
-template<typename T>
-void generator(
-	rti::beamlet<T>& bl, 
-	size_t thread_id, 
-	size_t n_histories)
-{
-    //std::cout<<"thread id: " << thread_id <<", n_histories: " << n_histories << std::endl;
-    //std::queue< std::tuple<phase_space_type, rti::vec3<phase_space_type>, rti::vec3<phase_space_type>> > histories;
-	while(n_histories--){
-	    auto history = bl();
-        //histories.push(history);
-	}	
-        
-    /* 
-    //how we return this to thread outside?
-    while(!histories.empty()){
-        auto history   = histories.front();
-        auto energy    = std::get<0>(history);
-        auto pos       = std::get<1>(history);
-        auto momentum  = std::get<2>(history);
-	    std::cout<< pos.x <<" "<< pos.y <<" "<< pos.z<< " " 
-            << momentum.x << " " << momentum.y << " " << momentum.z << " "
-            << energy << std::endl;
-            histories.pop();
-    }
-    */
-
+	
 }
 
 void describe(const rti::dataset* beam){

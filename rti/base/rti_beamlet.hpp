@@ -14,7 +14,7 @@
 #include <array>
 #include <tuple>
 
-
+#include <rti/base/rti_vertex.hpp>
 #include <rti/base/rti_distributions.hpp>
 #include <rti/base/rti_coordinate_transform.hpp>
 
@@ -81,16 +81,19 @@ public:
     /// \return a tuple of energy, position(vec3), direction (vec3)
     CUDA_HOST_DEVICE
     virtual 
-    std::tuple<T, rti::vec3<T>, rti::vec3<T> > 
-    operator()(void){
+    rti::vertex_t<T>
+    operator()(void)
+	{
         std::array<T, 6> phsp = (*fluence)() ;
 
         rti::vec3<T> pos(phsp[0], phsp[1], phsp[2]);
         rti::vec3<T> dir(phsp[3], phsp[4], phsp[5]);
-        
-        return std::make_tuple((*energy)()[0], 
-                                p_coord.rotation*pos+p_coord.translation, 
-                                p_coord.rotation*dir); 
+
+		rti::vertex_t<T> vtx;
+		vtx.ke  = (*energy)()[0];
+		vtx.pos = p_coord.rotation*pos+p_coord.translation;
+		vtx.dir = p_coord.rotation*dir;
+        return vtx;
         
     };
 
