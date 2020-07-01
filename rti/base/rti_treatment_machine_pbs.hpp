@@ -84,8 +84,8 @@ public:
     pbs(const std::string filename) : cm2mm(10.0), mm2cm(0.0)
     {
 		this->load_beamdata(filename);
-        if(geometry_spec_.SAD[0] == 0) treatment_machine_ion<T>::SAD_[0] = std::numeric_limits<T>::infinity();
-        if(geometry_spec_.SAD[1] == 0) treatment_machine_ion<T>::SAD_[1] = std::numeric_limits<T>::infinity();
+		treatment_machine_ion<T>::SAD_[0] = geometry_spec_.SAD[0] ; 
+		treatment_machine_ion<T>::SAD_[1] = geometry_spec_.SAD[1] ;
     }
     
     ~pbs(){;}
@@ -217,65 +217,6 @@ public:
         return rti::beamlet<T>(energy, beamlet);
     }
 
-    /// Characterize Rangeshifter
-    rti::rangeshifter*
-    characterize_rangeshifter(
-        const rti::dataset* ds,
-        rti::modality_type m)
-    {
-        auto seq_tags = &rti::seqtags_per_modality.at(m);
-        //1. rangeshifter sequence
-        auto  rs_ds = (*ds)( seq_tags->at("rs")) ;
-        assert(rs_ds.size() >=1);
-
-        //2. layer0 for snout and rangeshifter setting sequence
-        auto layer0    = (*ds)(seq_tags->at("ctrl"))[0]; //layer0 for snout position
-        
-        rti::vec3<T> lxyz;
-        rti::vec3<T> pxyz;
-        rti::mat3x3<T> rxyz(0.0, 0.0, 0.0);
-        
-        lxyz.x = geometry_spec_.rangeshifter[0];
-        lxyz.y = geometry_spec_.rangeshifter[1]; //if this is 0, rangeshifter is circle
-        if( rangeshifter_.size() == 0 ){
-            std::vector<float> ftmp;
-            std::cout<<"Thickness is defined from RangeShifter Setting sequence\n";
-            auto rs_ss0 = (*layer0)(seq_tags->at("rsss"))[0];
-            
-            //% If MDACC simulates non-water material for rangeshifter,
-            //better to divide density ration for the material thickness.
-            rs_ss0 -> get_values("RangeShifterWaterEquivalentThickness", ftmp);
-            ///!!!! TODO
-            lxyz.z = ftmp[0]/1.15; //needs to check later
-
-            //? distance is center to center or to downside? upside?
-            rs_ss0 -> get_values("IsocenterToRangeShifterDistance", ftmp);
-            pxyz.z = ftmp[0];
-
-            pxyz.z -= lxyz.z ;
-
-        }else{
-            
-            std::cout<<"Thickness is defined from Rangeshifter ID\n";
-            std::vector<float> ftmp;        
-            layer0->get_values( "SnoutPosition", ftmp);
-            pxyz.z = ftmp[0];
-         
-            //3. There must be at least one range shifter sequence
-            for(auto r : rs_ds){
-                std::vector<std::string> rs_id(0);
-                r->get_values("RangeShifterID" , rs_id);
-                auto it = rangeshifter_.find(rti::trim_copy(rs_id[0]));
-                if(it != rangeshifter_.end()) lxyz.z += it->second;
-            }
-            assert(lxyz.z>0);
-            pxyz.z -= (lxyz.z*0.5 + geometry_spec_.rangeshifter_snout_gap) ;
-        }
-        std::cout<<"Range shifter thickness: " << lxyz.z
-                     << " (mm) and position: " << pxyz.z <<" (mm)" << std::endl;
-        
-        return new rti::rangeshifter(lxyz, pxyz, rxyz);
-    }
     
     /// Characterize beam delievery time
     /// \param s_curr current spot to be delivered. The irradiation time depends on meterset of this spot
@@ -316,6 +257,66 @@ public:
         return {dT_on, dT_off};
 
     }
+    /// Characterize Rangeshifter
+    rti::rangeshifter*
+    characterize_rangeshifter(
+        const rti::dataset* ds,
+        rti::modality_type m)
+    {
+        auto seq_tags = &rti::seqtags_per_modality.at(m);
+        //1. rangeshifter sequence
+        auto  rs_ds = (*ds)( seq_tags->at("rs")) ;
+        assert(rs_ds.size() >=1);
+
+        //2. layer0 for snout and rangeshifter setting sequence
+        auto layer0    = (*ds)(seq_tags->at("ctrl"))[0]; //layer0 for snout position
+        
+        rti::vec3<T> lxyz;
+        rti::vec3<T> pxyz;
+        rti::mat3x3<T> rxyz(0.0, 0.0, 0.0);
+        
+        lxyz.x = geometry_spec_.rangeshifter[0];
+        lxyz.y = geometry_spec_.rangeshifter[1]; //if this is 0, rangeshifter is circle
+		bool is_rectangle = ( lxyz.y == 0 ) ? false : true;
+        if( rangeshifter_.size() == 0 ){
+            std::vector<float> ftmp;
+            std::cout<<"Thickness is defined from RangeShifter Setting sequence\n";
+            auto rs_ss0 = (*layer0)(seq_tags->at("rsss"))[0];
+            
+            //% If MDACC simulates non-water material for rangeshifter,
+            //better to divide density ration for the material thickness.
+            rs_ss0 -> get_values("RangeShifterWaterEquivalentThickness", ftmp);
+            ///!!!! TODO
+            lxyz.z = ftmp[0]/1.15; //needs to check later
+
+            //? distance is center to center or to downside? upside?
+            rs_ss0 -> get_values("IsocenterToRangeShifterDistance", ftmp);
+            pxyz.z = ftmp[0];
+
+            pxyz.z -= lxyz.z ;
+
+        }else{
+            
+            std::cout<<"Thickness is defined from Rangeshifter ID\n";
+            std::vector<float> ftmp;        
+            layer0->get_values( "SnoutPosition", ftmp);
+            pxyz.z = ftmp[0];
+         
+            //3. There must be at least one range shifter sequence
+            for(auto r : rs_ds){
+                std::vector<std::string> rs_id(0);
+                r->get_values("RangeShifterID" , rs_id);
+                auto it = rangeshifter_.find(rti::trim_copy(rs_id[0]));
+                if(it != rangeshifter_.end()) lxyz.z += it->second;
+            }
+            assert(lxyz.z>0);
+            pxyz.z -= (lxyz.z*0.5 + geometry_spec_.rangeshifter_snout_gap) ;
+        }
+        std::cout<<"Range shifter thickness: " << lxyz.z
+                     << " (mm) and position: " << pxyz.z <<" (mm)" << std::endl;
+
+        return new rti::rangeshifter(lxyz, pxyz, rxyz, is_rectangle);
+    }
   
     /// Characterize aperture
     rti::aperture*
@@ -340,7 +341,8 @@ public:
         rti::mat3x3<float> rxyz(0.0, 0.0, 0.0);
         //3. x-y points for opening
         auto xypts = this->characterize_aperture_opening(ds,m);
-        return new rti::aperture(xypts, lxyz, pxyz, rxyz, false);
+		bool is_rectangle = ( lxyz.y == 0 ) ? false : true;
+        return new rti::aperture(xypts, lxyz, pxyz, rxyz, is_rectangle);
     }
 
 

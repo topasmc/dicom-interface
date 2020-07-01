@@ -266,7 +266,6 @@ G4bool TsRTIonSource::ReadHistoriesPerBeamlet(std::queue<TsPrimaryParticle>* par
     while(histories_of_beamlet--){
         
         auto h   = beamlet_distribution();
-
         TsPrimaryParticle p;
         p.particleDefinition = particle_definition_; 
 

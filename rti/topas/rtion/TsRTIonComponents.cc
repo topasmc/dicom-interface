@@ -374,8 +374,19 @@ bool TsRTIonComponents::ConstructRangeShifter(
 	G4String rs_name = "rangeshifter";
 	G4String rs_mat = fPm->GetStringParameter(GetFullParmName(G4String(rs_name + "/material")));
 
+
+
+	G4VSolid *rs_solid = nullptr;
 	const rti::vec3<float> &vol = rs->volume;
-	G4Box *rs_solid = new G4Box(rs_name, 0.5 * vol.x * mm, 0.5 * vol.y * mm, 0.5 * vol.z * mm);
+
+	if (rs->is_rectangle){
+		rs_solid = new G4Box(rs_name, 0.5 * vol.x * mm, 0.5 * vol.y * mm, 0.5 * vol.z * mm);
+	}
+	else{
+		rs_solid = new G4Tubs(rs_name, 0.0, vol.x * mm, 0.5*vol.z * mm, 0.0 * deg, 360.0 * deg);
+	}
+	
+	//G4Box *rs_solid = new G4Box(rs_name, 0.5 * vol.x * mm, 0.5 * vol.y * mm, 0.5 * vol.z * mm);
 
 	G4LogicalVolume *rs_log = CreateLogicalVolume(rs_name, rs_mat, rs_solid);
 
@@ -423,13 +434,11 @@ bool TsRTIonComponents::ConstructBlock(
 
 	const rti::vec3<float> &vol = apt->volume;
 
-	if (apt->is_rectangle)
-	{
+	if (apt->is_rectangle){
 		gblock = new G4Box(blk_name, 0.5 * vol.x * mm, 0.5 * vol.y * mm, 0.5 * vol.z * mm);
 	}
-	else
-	{
-		gblock = new G4Tubs(blk_name, 0.0, vol.x * mm, 0.5*vol.z * mm, 0.0 * deg, vol.y * deg);
+	else{
+		gblock = new G4Tubs(blk_name, 0.0, vol.x * mm, 0.5*vol.z * mm, 0.0 * deg, 360.0 * deg);
 	}
 
 	G4LogicalVolume *lblock = CreateLogicalVolume(blk_name, blk_mat, gblock);

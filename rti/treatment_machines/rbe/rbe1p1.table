@@ -1,12 +1,12 @@
 [geometry]
 # key value1 value2
 SAD(mm)          1340  1720
-rangeshifter(mm) 300 400
-#rangeshifter(mm) 80  0 #circle
+#rangeshifter(mm) 200 200
+rangeshifter(mm) 80  0 #circle
 rangeshifter_snout_gap(mm) 17 
 #rangeshifter_wet 1.15
-aperture(mm) 30 40 
-#aperture(mm) 70 0 #circle
+#aperture(mm) 100 150
+aperture(mm) 70 0 #circle
 
 [rangeshifter_thickness]
 #otherwise we expect the thickness is specified in WET

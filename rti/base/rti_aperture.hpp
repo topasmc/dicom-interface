@@ -15,7 +15,7 @@ namespace rti{
 class aperture : public geometry{
 public:
     /// whehter aperture shape is box or cylinder type
-    const bool is_rectangle ;
+    bool is_rectangle ;
 
     /// aperture dimension, (Lx, Ly, Lz) for box or (R, H, dummy) for cylinder
     const rti::vec3<float> volume;
@@ -38,7 +38,7 @@ public:
         bool is_rect = true) 
     : block_data(xypts),
       volume(v),
-      is_rectangle(is_rect),
+	  is_rectangle(is_rect),
       geometry (p, r, rti::geometry_type::BLOCK)
     {;}
 

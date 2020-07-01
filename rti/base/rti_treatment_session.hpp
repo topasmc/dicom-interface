@@ -128,6 +128,7 @@ public:
 
         }else{
             machine_name_ = m_name;
+			std::cout<<machine_name_<<"\n";
         }
 	
         if (!this->create_machine(machine_name_, mc_code)){

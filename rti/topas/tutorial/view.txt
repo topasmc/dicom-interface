@@ -22,4 +22,4 @@ u:Gr/MyOGLb/Zoom = 1
 s:Gr/MyOGLb/Projection = "Perspective"
 d:Gr/MyOGLb/PerspectiveAngle = 10.0 deg
 
-b:Ts/UseQt = "T"
+#b:Ts/UseQt = "T"

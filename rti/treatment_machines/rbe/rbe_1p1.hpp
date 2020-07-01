@@ -73,20 +73,17 @@ public:
         // 1. constant energy
         auto energy = new rti::const_1d<T>({s.e},{0});
 
-        //Fluence distribution
-        // 1. beamlet direction
-        rti::vec3<T> dir(std::atan(s.x/treatment_machine_ion<T>::SAD_[0]),
-                         std::atan(s.y/treatment_machine_ion<T>::SAD_[1]),
-                         -1.0);
-
-        // 2. new x-y position at source plane
-        rti::vec3<T> pos(0, 0, rti::treatment_machine_ion<T>::source_to_isocenter_mm_);
-        pos.x = (treatment_machine_ion<T>::SAD_[0] - pos.z) * dir.x ;
-        pos.y = (treatment_machine_ion<T>::SAD_[1] - pos.z) * dir.y ;
-
+        // 2. X-Y position at at z
+        rti::vec3<T> iso(s.x, s.y, 0);
+        rti::vec3<T> beam =
+			this->beam_starting_position(iso,
+								   rti::treatment_machine_ion<T>::source_to_isocenter_mm_);
+        rti::vec3<T> dir = iso - beam;
+        dir.normalize(); 
+		
         // 3. Complete fluence distribution
         // this samples x, x', y, y', z, z'
-        std::array<T,6> spot_mean = {pos.x, pos.y, pos.z, dir.x, dir.y, -1};
+        std::array<T,6> spot_mean = {beam.x, beam.y, beam.z, dir.x, dir.y, dir.z};
         std::array<T,6> spot_sigm = {s.fwhm_x/T(2.355), s.fwhm_y/T(2.355), 0.0, 0.0, 0.0, 0.0};
         std::array<T,2> corr      = {0.0, 0.0};
         auto fluence= new rti::phsp_6d<T>(spot_mean, spot_sigm, corr);
