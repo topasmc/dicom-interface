@@ -1,0 +1,7 @@
+# ===== #
+s:Rt/RTION/PlanFile     = "../../treatment_machines/rbe/rtip_demo.dcm"
+s:Rt/RTION/DoseFile     = "Abdomen/rtdose.dcm"
+s:Rt/RTION/CTDirectory  = "Abdomen"
+u:Rt/RTION/ParticlesPerHistory = -1
+#s:Rt/RTION/BeamNameToBeSimulated = "270A1"
+i:Rt/RTION/BeamNumberToBeSimulated = 1

@@ -1,0 +1,37 @@
+includeFile = plan_hu.txt
+
+
+# ---- TOPAS' example CT was used. Then, 
+Ge/RTION/TransX = 0.0 mm
+Ge/RTION/TransY = 0.0 mm
+Ge/RTION/TransZ = 0.0 mm
+# ----
+So/RTION/ShiftX = 0.0 mm
+So/RTION/ShiftY = 0.0 mm
+So/RTION/ShiftZ = 0.0 mm
+i:Gr/ShowOnlyOutlineIfVoxelCountExceeds = 1000000
+
+#--- physics
+Ph/Default/Modules = 1 "g4em-standard_opt4"
+
+#--- beamlet
+#iv:So/RTION/BeamletRange = 2 1 2 
+
+#--- IEC2DICOM 
+# Ge/RTION/RotIEC2DICOM       = 0.0 deg
+# So/RTION/RotIEC2DICOM       = 0.0 deg
+
+####################################################
+#----------------- Scorers --------------------
+####################################################
+#----------------- Dose --------------------
+s:Sc/DoseGrid_Dw/Component   = "Patient/RTDoseGrid" 
+s:Sc/DoseGrid_Dw/OutputFile  = "Dw_patient" 
+s:Sc/DoseGrid_Dw/OutputType  = "binary" 
+s:Sc/DoseGrid_Dw/IfOutputFileAlreadyExists = "OverWrite" # Exit, Overwrite or Increment
+b:Sc/DoseGrid_Dw/PreCalculateStoppingPowerRatios = "True"
+b:Sc/DoseGrid_Dw/OutputToConsole = "FALSE"
+
+#----------------- LETd --------------------
+#?
+

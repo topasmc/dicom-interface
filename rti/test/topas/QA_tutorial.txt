@@ -1,0 +1,44 @@
+includeFile = QA.txt
+
+# This is a file for users who want to change default settings in QA application chain
+
+#---- Physics 
+# Ph/Default/Modules = 1 "g4em-standard_opt4"
+# Ph/Default/Modules = 6 "g4em-standard_opt4" "g4h-phy_QGSP_BERT_HP" "g4decay" "g4ion-binarycascade" "g4h-elastic_HP" "g4stopping"
+
+#----
+# RangeShifter On/Off 
+# b:Ge/RTION/IncludeRangeshifterIfExist = "T"
+
+# Aperture On/Off
+# b:Ge/RTION/IncludeBlockIfExist        = "T"
+
+
+# --------------------------------
+# control number of particles
+# particle per history
+# -1 : 1 history per beamlet
+# 1e6 : 1 history represents 1e6 protons 
+# u:So/RTION/ParticlesPerHistory = 1e6
+
+# --------------------------------
+# Beamlet range 
+# you can specify beamlet ranges to simulate
+# ex) follow will simulate only 1st and 2nd beamlets.
+# iv:So/RTION/BeamletRange = 2 1 2 
+
+# Gantry/Couch angle override 
+# RotCollimator/Gantry/PatientSupport/IEC2DICOM are RTION specific
+#Ge/RTION/RotCollimator      = 0.0 deg
+Ge/RTION/RotGantry          = 30.0 deg
+Ge/RTION/RotPatientSupport  = 40.0 deg
+#Ge/RTION/RotIEC2DICOM       = 0.0 deg
+
+#So/RTION/RotCollimator      = 0.0 deg
+So/RTION/RotGantry          = 30.0 deg
+So/RTION/RotPatientSupport  = 40.0 deg
+#So/RTION/RotIEC2DICOM       = 0.0 deg
+
+# ---------------------------------
+# change your output file name
+s:Sc/DoseGrid_Dw/OutputFile  = "Dw" 

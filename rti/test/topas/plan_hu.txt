@@ -1,5 +1,7 @@
 includeFile = plan.txt
 
+# For TOPAS 3.5
+b:Ge/Patient/SchneiderUseVariableDensityMaterials = "True"
 
 ###################################################
 #---- Cut values for Patient calculations ----#
