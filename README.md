@@ -31,8 +31,7 @@ Beamline geometries, gantry and patient coordinate systems, and fluence map are 
 
 ### Monte Carlo 
 
-- **[TOPAS](http://www.topasmc.org)** (version 3.2) is required and assumed pre-installed.
-  tested versions are 3.5, 3.2, and 3.1
+- **[TOPAS](http://www.topasmc.org)** are tested for versions 3.1, 3.2, and 3.5.
 
 ### Tested operating systems
   - Mac OS X
