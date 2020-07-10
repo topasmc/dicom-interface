@@ -25,19 +25,23 @@ Beamline geometries, gantry and patient coordinate systems, and fluence map are 
 
 ### Requirements
 
-- **[TOPAS](http://www.topasmc.org)** (version 3.2) is required and assumed pre-installed.
-  tested versions are 3.2 and 3.1
 - **[GDCM](http://gdcm.sourceforge.net)** (tested versions are 2.4 and 2.6.) library (header and objects) is required.
   tested versions are 2.4 and 2.6.
   version 3.0 doesn't work with RTI (thank to Dohyeon).
+
+### Monte Carlo 
+
+- **[TOPAS](http://www.topasmc.org)** (version 3.2) is required and assumed pre-installed.
+  tested versions are 3.5, 3.2, and 3.1
 
 ### Tested operating systems
   - Mac OS X
     - 10.14.5, clang++ (LLVM version 10.0.1, /usr/bin/c++)
     - cmake version 3.x
-  - Red Hat Enterprise Linux Server release 6.7
-    - g++ (4.9.0)
-
+  - Linux
+    - Red Hat Enterprise Linux Server release 6.7 g++ (4.9.0)
+    - Ubuntu 19.10  
+  
 ### Installation
 
 As **RTI** is a header only library, copy or download the files to somewhere in your system.
@@ -86,7 +90,7 @@ For more detail, please see this project's wiki page [https://github.com/topasmc
 - **Edmunds, David**: GPU (cuda) implementation
 - **Kooy, Hanne, M.** : Advisor
 - **Paganetti, Harald** : Advisor
-- **Clasie, Benjamin M.** : Advior
+- **Clasie, Benjamin M.** : Advisor
   
 ## Acknowledgements
 
