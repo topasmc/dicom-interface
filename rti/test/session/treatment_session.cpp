@@ -57,7 +57,7 @@ int main(int argc, char** argv){
     if (cl_opts["--pph"].size()>=1) particles_per_history = std::stod(cl_opts["--pph"][0]);
 
     //source to isocenter distance (mm)
-    float sid = 0.0 ;
+    float sid = 100.0 ;
     if (cl_opts["--sid"].size()>=1) sid = std::stof(cl_opts["--sid"][0]);
 
     //coordinate system: translational & rotational
