@@ -128,9 +128,9 @@ public:
 
         }else{
             machine_name_ = m_name;
-			std::cout<<machine_name_<<"\n";
+		    std::cout<<machine_name_<<"\n";
         }
-	
+    
         if (!this->create_machine(machine_name_, mc_code)){
             std::runtime_error("No MC machine is registered for "+machine_name_);
         }
@@ -147,47 +147,47 @@ public:
     /// type_traits allows to branch the logic flow based on the type of variables.
     bool
     create_machine
-	(std::string machine_name,
+    (std::string machine_name,
      std::string mc_code)
     {
-		if(tx_machine_){
-				throw std::runtime_error("Preexisting machine.");
-		}
+        if(tx_machine_){
+            throw std::runtime_error("Preexisting machine.");
+        }
         std::cout<<"machine_name: "<<machine_name<<", mc_code: "<<mc_code<<std::endl;
-		const size_t deli = machine_name.find(":");
-		std::string site  = machine_name.substr(0, deli);
+        const size_t deli = machine_name.find(":");
+        std::string site  = machine_name.substr(0, deli);
         std::transform(site.begin(),site.end(),site.begin(),::tolower);
         std::string model = machine_name.substr(deli+1,machine_name.size());
         
         if( site.compare("pbs")) std::transform(model.begin(), model.end(), model.begin(), ::tolower);
         
-		std::cout<<site<< ":" << model <<"\n";
+        std::cout<<site<< ":" << model <<"\n";
 
-		if( !site.compare("pbs") ){
-			//Generic PBS beam model
-			//expecting file
-			std::cout<<"Creating a generic PBS machine from : " << model << "\n";
-			tx_machine_ = new rti::pbs<T>(model);
-			return true;
-		}else if(!site.compare("rbe") ){
-			if ( !model.compare("1.1") ){
-				tx_machine_ = new rti::rbe::rbe_1p1<T>;
-				return true;
-			}
-       	    else{
-				throw std::runtime_error("Valid machine is not available.");
-			}
+        if( !site.compare("pbs") ){
+            //Generic PBS beam model
+            //expecting file
+            std::cout<<"Creating a generic PBS machine from : " << model << "\n";
+            tx_machine_ = new rti::pbs<T>(model);
+            return true;
+        }else if(!site.compare("rbe") ){
+            if ( !model.compare("1.1") ){
+                tx_machine_ = new rti::rbe::rbe_1p1<T>;
+                return true;
+            }
+            else{
+                throw std::runtime_error("Valid machine is not available.");
+            }
 
-		}else{
-			throw std::runtime_error("Valid site is not available.");
-		}
+        }else{
+            throw std::runtime_error("Valid site is not available.");
+        }
 
         return false;
     }
 
     /// Default destructor
     ~treatment_session(){
-	delete tx_machine_;
+    delete tx_machine_;
         delete rti_ds_;
     }
 

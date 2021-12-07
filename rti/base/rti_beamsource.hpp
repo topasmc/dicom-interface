@@ -32,9 +32,9 @@ public:
 
     /// Default constructor
     beamsource(){
-		beamlets_.clear();
-		timeline_.clear();
-		cdf2beamlet_.clear();
+        beamlets_.clear();
+        timeline_.clear();
+        cdf2beamlet_.clear();
     }
 
     /// Add a beamlet to internal containers
@@ -46,8 +46,8 @@ public:
         rti::beamlet<T> b, 
         size_t h,
         rti::coordinate_transform<T> p,
-		T time_on  = 1,
-		T time_off = 0 )
+        T time_on  = 1,
+        T time_off = 0 )
     {
         b.set_coordinate_transform(p);
         this->append_beamlet(b,h, time_on, time_off);
@@ -60,20 +60,20 @@ public:
     append_beamlet(
         rti::beamlet<T> b, 
         size_t h,
-		T time_on  = 1,
-		T time_off = 0)
+        T time_on  = 1,
+        T time_off = 0)
     {
         const size_t acc = total_histories() + h ;
-		const size_t beamlet_id = this->total_beamlets(); //current number of beamlets -> beamlet ID
+        const size_t beamlet_id = this->total_beamlets(); //current number of beamlets -> beamlet ID
         cdf2beamlet_.insert( std::make_pair(acc, beamlet_id) ); 
         beamlets_.push_back( std::make_tuple(b,h,acc) );
 
-		T acc_time = this->total_delivery_time() + time_on ;
-		timeline_.insert(std::make_pair(acc_time, beamlet_id));
-		if (time_off != 0 ){
-			acc_time += time_off ; 
-			timeline_.insert(std::make_pair(acc_time, -1));
-		}
+        T acc_time = this->total_delivery_time() + time_on ;
+        timeline_.insert(std::make_pair(acc_time, beamlet_id));
+        if (time_off != 0 ){
+            acc_time += time_off ; 
+            timeline_.insert(std::make_pair(acc_time, -1));
+        }
     }
 
     /// Total delivery time
@@ -81,8 +81,8 @@ public:
     T
     total_delivery_time() const
     {
-		if(timeline_.size() == 0) return 0.0;
-		return std::prev(timeline_.end())->first;
+        if(timeline_.size() == 0) return 0.0;
+        return std::prev(timeline_.end())->first;
     }
     
     /// Returns size of beamlets.
@@ -90,8 +90,8 @@ public:
     const std::size_t
     total_beamlets() const
     {
-		return beamlets_.size();
-	}
+        return beamlets_.size();
+    }
 
     /// Returns total number of histories
     /// \return total number of histories
@@ -109,8 +109,8 @@ public:
     operator[]
     (unsigned int i)const
     {
-		return beamlets_[i];
-	}
+        return beamlets_[i];
+    }
 
     /// Returns a beamlet of a history
     /// \return a beamlet reference (const)
@@ -130,13 +130,13 @@ public:
     cumulative_history_at_time
     (T t0)
     {
-		auto pulse = timeline_.lower_bound(t0);
-		if(pulse == timeline_.end()) return this->total_histories();
+        auto pulse = timeline_.lower_bound(t0);
+        if(pulse == timeline_.end()) return this->total_histories();
 
-		if(pulse->second == -1){
-			while(pulse->second ==-1) --pulse;
-			return std::get<2>(beamlets_[pulse->second]);
-		}
+        if(pulse->second == -1){
+            while(pulse->second ==-1) --pulse;
+            return std::get<2>(beamlets_[pulse->second]);
+        }
 
         size_t history  = std::get<2>(beamlets_[pulse->second]);
         
@@ -147,12 +147,12 @@ public:
         const T ratio  = (t0 - pulse_time[0])/(pulse_time[1] - pulse_time[0]);
 
         if ( ratio >= 0){
-			const size_t h0 = std::get<1> (beamlets_[pulse->second]);
-			const size_t h1 = (size_t) std::floor( (1.0-ratio) * h0);
-			history -= h1 ;
-		}
-		return history;
-	}
+            const size_t h0 = std::get<1> (beamlets_[pulse->second]);
+            const size_t h1 = (size_t) std::floor( (1.0-ratio) * h0);
+            history -= h1 ;
+        }
+        return history;
+    }
 };
 
 }

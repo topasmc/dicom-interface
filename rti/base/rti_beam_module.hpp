@@ -22,12 +22,13 @@ protected:
     const rti::modality_type modality_ ;
     
 public:
-    beam_module(
-        const rti::dataset* d,
-        rti::modality_type m)
-        :ds_(d), modality_(m)
+    beam_module(const rti::dataset* d,
+                rti::modality_type m)
+               :ds_(d), modality_(m)
     {;}
+    
     ~beam_module(){;}
+    
     virtual void dump() const {;}
 
 
