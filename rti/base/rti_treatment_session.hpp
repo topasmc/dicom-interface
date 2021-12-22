@@ -186,8 +186,9 @@ public:
     }
 
     /// Default destructor
-    ~treatment_session(){
-    delete tx_machine_;
+    ~treatment_session()
+    {
+        delete tx_machine_;
         delete rti_ds_;
     }
 
@@ -294,9 +295,8 @@ public:
    std::map<T, int32_t>
    get_timeline(S beam_id)
    {
-       return tx_machine_->create_timeline(
-           this->get_beam_dataset(beam_id),
-           mtype_);
+       return tx_machine_->create_timeline( this->get_beam_dataset(beam_id),
+                                            mtype_);
    }
 
     /// Gets beam coordinate object for given beam id, e.g, beam name or beam number
@@ -305,16 +305,14 @@ public:
     template<typename S>
     rti::coordinate_transform<T>
     get_coordinate(S beam_id){
-        return tx_machine_->create_coordinate_transform(
-            this->get_beam_dataset(beam_id),
-            mtype_);
+        return tx_machine_->create_coordinate_transform( this->get_beam_dataset(beam_id),
+                                                         mtype_);
     }
 
     /// Summarize plan
     /// \param bnb for beam number
     void
     summary(void){
-        //plan_ds
         rti_ds_->dump();
     }
 

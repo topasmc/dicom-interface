@@ -68,7 +68,7 @@ public:
     //G4bool ReadSomeDataFrombeam(std::queue<TsPrimaryParticle>* );
     G4bool ReadHistoriesPerBeamlet(std::queue<TsPrimaryParticle>* );
 
-    void UpdateForNewRun(G4bool);
+    void UpdateForNewRun(G4bool){;}
     
 };
 
