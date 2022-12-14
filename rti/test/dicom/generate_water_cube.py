@@ -91,7 +91,10 @@ def main(dir, args):
         os.mkdir(os.path.join(args.outdir,'ct'))
     else:
         print('Writing to preexisting output folder',args.outdir)
-
+        if not os.path.exists(os.path.join(args.outdir,'ct')):
+            print('Creating output subfolder',os.path.join(args.outdir,'ct'))
+            os.mkdir(os.path.join(args.outdir,'ct'))
+        
     # Define geometry of water cube
     rows = 512
     columns = 512
