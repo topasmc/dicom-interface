@@ -28,7 +28,7 @@ class TsRTIonComponents : public TsVGeometryComponent
 {
 protected: 
 
-	std::unique_ptr<rti::treatment_session<float>> rti_session_  ; 
+	std::unique_ptr<rti::treatment_session<float>> rti_session_ {nullptr} ; 
 
 	rti::beamline<float> beamline_;
 
@@ -49,7 +49,7 @@ protected:
 		const rti::vec3<float>& p
 	);
 
-    bool
+    void
     ExportDICOMCoordinateToParameters(
         rti::coordinate_transform<float>& p
     );

@@ -288,7 +288,7 @@ TsRTIonComponents::Construct()
 	return fEnvelopePhys;
 }
 
-bool TsRTIonComponents::ExportDICOMCoordinateToParameters(
+void TsRTIonComponents::ExportDICOMCoordinateToParameters(
 	rti::coordinate_transform<float> &p)
 {
 	//1. isocenter
