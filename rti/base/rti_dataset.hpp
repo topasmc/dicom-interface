@@ -520,7 +520,7 @@ public:
                 const size_t ndim     = el.GetVL()/sizeof(float);
                 //const size_t bufsize  = ndim*sizeof(float) ; //sizeof(T)
 
-                float c[ndim];
+                float* c = new float[ndim];
                 bv->GetBuffer( (char*) c, sizeof(c));
 
                 std::cout<<"FL encoding: " ;
@@ -528,6 +528,7 @@ public:
                     std::cout<<"   "<<i <<": " << c[i] ;
                 }
                 std::cout<<std::endl;
+                delete[] c;
 
             }else{
                 //std::cout<<el.GetValue() <<", Byte value:"<< el.GetByteValue() << std::endl;

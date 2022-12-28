@@ -116,7 +116,6 @@ namespace rti{
         float result;
         int order = 4; // order of the poly
         // Allocate enough space for any table we'd like to read.
-        float lambda[npoints]; // lambda[npoints] error: variable length arrays are not supported in OpenCL
         // check order of interpolation
         if (order > npoints) order = npoints;
         // if x is ouside the vector_X[] interval
@@ -135,6 +134,7 @@ namespace rti{
         if (j < 0) j=0;
         if (j+order > npoints ) j=npoints-order;
         result = 0.0;
+        float* lambda = new float[npoints];
         for (int is = j; is < j+order; is++)
         {
             lambda[is] = 1.0;
@@ -144,6 +144,7 @@ namespace rti{
             }
             result += vector_Y[is]*lambda[is];
         }
+        delete[] lambda;
         return result;
     }
 }
