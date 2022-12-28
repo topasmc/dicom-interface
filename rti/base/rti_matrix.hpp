@@ -44,11 +44,11 @@ public:
     {;}
 
     CUDA_HOST_DEVICE
-    mat3x3(T xx, T xy, T xz,T yx, T yy, T yz,T zx, T zy, T zz ): 
+    mat3x3(T xx_, T xy_, T xz_,T yx_, T yy_, T yz_,T zx_, T zy_, T zz_ ):
     x(0),y(0),z(0),
-    xx(xx),xy(xy),xz(xz),
-    yx(yx),yy(yy),yz(yz),
-    zx(zx),zy(zy),zz(zz)
+    xx(xx_),xy(xy_),xz(xz_),
+    yx(yx_),yy(yy_),yz(yz_),
+    zx(zx_),zy(zy_),zz(zz_)
     {;}
 
     CUDA_HOST_DEVICE
@@ -374,15 +374,15 @@ public:
 
     CUDA_HOST_DEVICE
     mat4x4(
-        T xx, T xy, T xz, T xs,
-        T yx, T yy, T yz, T ys,
-        T zx, T zy, T zz, T zs,
-        T sx, T sy, T sz, T ss
+        T xx_, T xy_, T xz_, T xs_,
+        T yx_, T yy_, T yz_, T ys_,
+        T zx_, T zy_, T zz_, T zs_,
+        T sx_, T sy_, T sz_, T ss_
     ): 
-    xx(xx),xy(xy),xz(xz),xs(xs),
-    yx(yx),yy(yy),yz(yz),ys(ys),
-    zx(zx),zy(zy),zz(zz),zs(zs),
-    sx(sx),sy(sy),sz(sz),ss(ss)
+    xx(xx_),xy(xy_),xz(xz_),xs(xs_),
+    yx(yx_),yy(yy_),yz(yz_),ys(ys_),
+    zx(zx_),zy(zy_),zz(zz_),zs(zs_),
+    sx(sx_),sy(sy_),sz(sz_),ss(ss_)
     {;}
 
     CUDA_HOST_DEVICE
