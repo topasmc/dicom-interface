@@ -45,9 +45,9 @@ public:
 protected:
      
     /// the center of pixel
-    R* x_;  ///< x axis values. 
-    R* y_;  ///< y axis values. 
-    R* z_;  ///< z axis values. 
+    R* x_ {nullptr};  ///< x axis values.
+    R* y_ {nullptr};  ///< y axis values.
+    R* z_ {nullptr};  ///< z axis values.
 
     //To make navigation and interpolation problems simple, we assume Transport matrix
     //X: 1, 0, 0 Y: 0, 1, 0 Z: 0, 0, 1
@@ -132,9 +132,9 @@ public:
     
     /// Destructor releases dynamic allocation for x/y/z coordinates
     ~rect3d(){
-        delete x_;
-        delete y_;
-        delete z_;
+        delete[] x_;
+        delete[] y_;
+        delete[] z_;
     }
 
     /// Returns data

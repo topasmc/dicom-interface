@@ -27,7 +27,7 @@ protected:
 
     std::map<std::string, std::string> uid2file_ ; ///< SOP instance UID to id in files_
 
-    char* ct_dir; ///< directory for CT files
+    char* ct_dir {nullptr}; ///< directory for CT files
 
     R dx_; ///< pixel size in X
     R dy_; ///< pixel size in Y
@@ -37,6 +37,8 @@ public:
     /// Default constructor
     CUDA_HOST
     ct(){;}
+
+    ~ct() { delete[] ct_dir; }
 
     /// Constructs a rectlinear grid from array of x/y/z with their size 
     /// \param f CT directory
