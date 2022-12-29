@@ -42,7 +42,7 @@ public:
 
     /// Constructs a rectlinear grid from array of x/y/z with their size 
     /// \param f CT directory
-    /// \param is_print set true if you want to print out files 
+    /// \param is_print set true if you want to print out files (UNUSED)
     /// \note this method sets only dimensions and extensions. 
     /// \see load_data() to read in pixel data
     CUDA_HOST
@@ -50,6 +50,7 @@ public:
         std::string f, 
         bool is_print=false)
     {
+        (void)is_print;//unused
         ct_dir = new char[f.length()+1];
         strcpy(ct_dir, f.c_str());
 

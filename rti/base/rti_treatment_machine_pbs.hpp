@@ -99,6 +99,9 @@ public:
         const rti::beam_module_ion::spot& s1, 
         float scale)
     {
+        (void)s0;//unused
+        (void)s1;//unused
+        (void)scale;//unused
         return 0;
     }
 

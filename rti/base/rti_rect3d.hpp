@@ -356,13 +356,14 @@ public:
     }
 
     /// Returns whether the point is in the rect including edge or not
-    /// \param pos cartesian coordinate of x,y,z
-    /// \return true if the p is in grid or false
+    /// \param pos cartesian coordinate of x,y,z (UNUSED)
+    /// \return true (OLD: true if the p is in grid or false)
     CUDA_HOST_DEVICE
     inline virtual 
     bool
     is_in_rect(const vec3<R>& p)
     {
+        (void)p;//unused
         //if( p.x < xedge_[0] || p.x >= xedge_[1]) return false;
         return true;
     }

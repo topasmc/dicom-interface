@@ -304,7 +304,7 @@ public:
 
             size_t ndim = vl/sizeof(float); ///< T should be given 'float'
             res.resize(ndim);
-
+            (void)vm;//unused
             /*
             std::cout<<"get_values(float) "
                  <<" VR: "<< vr
@@ -350,6 +350,7 @@ public:
         bool show=false )
     const
     {
+        (void)show;
         //works for VR of FL, DS, ...
         res.clear();
 
@@ -406,6 +407,7 @@ public:
         std::vector<std::string>& res )
     const
     {
+        (void)vl;//unused
         //works for VR of FL, DS, ...
         res.clear();
 

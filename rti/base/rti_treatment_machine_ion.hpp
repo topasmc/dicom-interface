@@ -186,6 +186,8 @@ public:
         const rti::beam_module_ion::spot& s_current,
         const rti::beam_module_ion::spot& s_next)
     {
+        (void)s_current;//unused
+        (void)s_next;//unused
 	return {1.0, 0.0};
     }
 	//			      const bool meterset_is_mu = false
@@ -217,6 +219,7 @@ public:
         const rti::beam_module_ion::spot& s1,
         float scale)
     {
+        (void)s0;//unused
         return s1.meterset / scale;
     }
 
