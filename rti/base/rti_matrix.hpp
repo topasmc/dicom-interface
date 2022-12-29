@@ -52,20 +52,20 @@ public:
     {;}
 
     CUDA_HOST_DEVICE
-    mat3x3(const mat3x3& ref){
-        x  = ref.x ;
-        y  = ref.y;
-        z  = ref.z;
-        xx = ref.xx;
-        xy = ref.xy;
-        xz = ref.xz;
-        yx = ref.yx;
-        yy = ref.yy;
-        yz = ref.yz;
-        zx = ref.zx;
-        zy = ref.zy;
-        zz = ref.zz;
-    }
+    mat3x3(const mat3x3& ref) :
+    x (ref.x ),
+    y (ref.y ),
+    z (ref.z ),
+    xx(ref.xx),
+    xy(ref.xy),
+    xz(ref.xz),
+    yx(ref.yx),
+    yy(ref.yy),
+    yz(ref.yz),
+    zx(ref.zx),
+    zy(ref.zy),
+    zz(ref.zz)
+    {;}
 
     CUDA_HOST_DEVICE
     mat3x3(T a, T b, T c):
@@ -90,6 +90,26 @@ public:
         if (x != 0) this->rotate_x(x);
         if (y != 0) this->rotate_y(y);
         if (z != 0) this->rotate_z(z);
+    }
+
+    /// Assignment operator
+    CUDA_HOST_DEVICE
+    mat3x3<T>&
+    operator=(const mat3x3<T>& ref)
+    {
+        x  = ref.x ;
+        y  = ref.y;
+        z  = ref.z;
+        xx = ref.xx;
+        xy = ref.xy;
+        xz = ref.xz;
+        yx = ref.yx;
+        yy = ref.yy;
+        yz = ref.yz;
+        zx = ref.zx;
+        zy = ref.zy;
+        zz = ref.zz;
+        return *this;
     }
 
     //Calculate rotation matrix from two vectors, from (f) and to (t).

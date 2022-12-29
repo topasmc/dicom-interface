@@ -36,19 +36,19 @@ public:
         rti::vec3<float>& p,
         rti::mat3x3<float>& r,
         bool is_rect = true) 
-    : block_data(xypts),
+    : geometry (p, r, rti::geometry_type::BLOCK),
+      is_rectangle(is_rect),
       volume(v),
-	  is_rectangle(is_rect),
-      geometry (p, r, rti::geometry_type::BLOCK)
+      block_data(xypts)
     {;}
 
     /// Creates a copy from an existing aperture
     aperture(
         const rti::aperture& rhs)
-    : volume(rhs.volume),
-      block_data(rhs.block_data),
-      is_rectangle(rhs.is_rectangle), 
-      geometry(rhs.pos, rhs.rot, rhs.geotype)
+    : geometry(rhs.pos, rhs.rot, rhs.geotype),
+      is_rectangle(rhs.is_rectangle),
+      volume(rhs.volume),
+      block_data(rhs.block_data)
     {;}
 
     /// Destructor

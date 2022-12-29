@@ -25,24 +25,24 @@ public:
     /// Constructor to copy mean and sigma and initialize normal_distributions
     CUDA_HOST_DEVICE
     norm_1d(
-        std::array<T,1>& m, 
-        std::array<T,1>& s) 
-    : pdf_Md<T,1>(m,s) 
+        std::array<T,1>& m_,
+        std::array<T,1>& s_)
+    : pdf_Md<T,1>(m_,s_)
     {
         #if !defined(__CUDACC__)
-        func_ = std::normal_distribution<T>(m[0], s[0]); 
+        func_ = std::normal_distribution<T>(m_[0], s_[0]);
         #endif
     }
     
     /// Constructor to copy mean and sigma
     CUDA_HOST_DEVICE
     norm_1d(
-        const std::array<T,1>& m, 
-        const std::array<T,1> &s)
-    : pdf_Md<T,1>(m,s)
+        const std::array<T,1>& m_,
+        const std::array<T,1> &s_)
+    : pdf_Md<T,1>(m_,s_)
     {
         #if !defined(__CUDACC__)
-        func_ = std::normal_distribution<T>(m[0], s[0]); 
+        func_ = std::normal_distribution<T>(m_[0], s_[0]);
         #endif
     }
 

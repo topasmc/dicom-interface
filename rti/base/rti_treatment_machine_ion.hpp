@@ -240,7 +240,7 @@ public:
         rti::beamline<T> beamline;
 
         ///< Access to tag LUT
-        auto seq_tags = &rti::seqtags_per_modality.at(m);
+        //auto seq_tags = &rti::seqtags_per_modality.at(m);
 
         ///< geometry creation of snout?
         ///< position from control point 0

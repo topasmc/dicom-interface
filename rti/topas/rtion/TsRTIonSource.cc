@@ -141,17 +141,17 @@ void TsRTIonSource::ResolveParameters(){
         //Writing img center should come before readign TransX/Y/Z
         G4String image_dir = fPm->GetStringParameter(GetFullParmName("imgdirectory"));
 
-        struct stat s;
-        if (stat(image_dir.c_str(), &s) == 0) //exist
+        struct stat ss;
+        if (stat(image_dir.c_str(), &ss) == 0) //exist
             {
                 //check imgdirectory is DIR 
-                (s.st_mode & S_IFDIR) ? true : throw std::runtime_error("Error: ImgDirectory should be a directory");
+                (ss.st_mode & S_IFDIR) ? true : throw std::runtime_error("Error: ImgDirectory should be a directory");
 			
                 //check # of files in the directory
                 DIR* dir = opendir(image_dir.c_str());
                 size_t files = 0;
                 struct dirent* ent ;
-                while(ent = readdir(dir)) files++;
+                while((ent = readdir(dir))) files++;
                 closedir(dir);
                 if(files>2){ // . and .. are counted.
                     rti::ct<float> patient_ct(image_dir);
@@ -290,7 +290,7 @@ G4bool TsRTIonSource::ReadHistoriesPerBeamlet(std::queue<TsPrimaryParticle>* par
 }
 
 
-bool
+void
 TsRTIonSource::ExportDICOMCoordinateToParameters(
         rti::coordinate_transform<float>& p
 ){

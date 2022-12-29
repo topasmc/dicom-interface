@@ -118,17 +118,17 @@ TsRTIonComponents::Construct()
 
 		G4String image_dir = fPm->GetStringParameter(GetFullParmName("imgdirectory"));
 
-		struct stat s;
-		if (stat(image_dir.c_str(), &s) == 0) //exist
+        struct stat ss;
+        if (stat(image_dir.c_str(), &ss) == 0) //exist
 		{
 			//check imgdirectory is DIR 
-			(s.st_mode & S_IFDIR) ? true : throw std::runtime_error("Error: ImgDirectory should be a directory");
+            (ss.st_mode & S_IFDIR) ? true : throw std::runtime_error("Error: ImgDirectory should be a directory");
 			
 			//check # of files in the directory
 			DIR* dir = opendir(image_dir.c_str());
 			size_t files = 0;
 			struct dirent* ent ;
-			while(ent = readdir(dir)) files++;
+            while((ent = readdir(dir))) files++;
 			closedir(dir);
 			if(files>2){ // . and .. are counted.
 				rti::ct<float> patient_ct(image_dir);
@@ -235,11 +235,11 @@ TsRTIonComponents::Construct()
 			if (fPm->ParameterExists(GetFullParmName("rtdosefile")))
 			{
 				G4String dose_file = fPm->GetStringParameter(GetFullParmName("rtdosefile"));
-				struct stat s;
+                struct stat ss;
 				bool is_default_grid = true;
-				if (stat(dose_file.c_str(), &s) == 0)
+                if (stat(dose_file.c_str(), &ss) == 0)
 				{
-					if (s.st_mode & S_IFLNK || s.st_mode & S_IFREG)
+                    if (ss.st_mode & S_IFLNK || ss.st_mode & S_IFREG)
 					{
 						std::cout << "Creating DoseGrid from RTDOSE" << std::endl;
 						rti::rtdose<float> dose_grid(dose_file);
@@ -450,9 +450,9 @@ bool TsRTIonComponents::ConstructBlock(
 													 fEnvelopePhys);
 
 	//holes
-	int start = 0;
+    //int start = 0;
 
-	for (int i = 0; i < apt->block_data.size(); ++i)
+    for (size_t i = 0; i < apt->block_data.size(); ++i)
 	{
 		auto xypts = apt->block_data[i];
 
@@ -478,7 +478,7 @@ bool TsRTIonComponents::ConstructBlock(
 	return true;
 }
 
-bool TsRTIonComponents::ExportDoseGridToParameters(
+void TsRTIonComponents::ExportDoseGridToParameters(
 	rti::rect3d<float, float> &dg,
 	rti::vec3<float> &ct_p,
 	rti::vec3<float> &trans_p)

@@ -235,9 +235,9 @@ public:
 
 		/// calculate beam-off time after beam is delivered.
         /// except last beamlet
-        if( &s_next != nullptr){
+        //if( &s_next != nullptr){
             if (s_next.e != s_curr.e){
-                /// Layer changae.
+                /// Layer change.
                 /// Note: The spot-settling time is not required or included in layer-switching time.
                 dT_off = time_spec_.e*sec;
             }else{
@@ -252,7 +252,7 @@ public:
             ///add latencies (up and down)
             dT_off += (time_spec_.dt_up*ms);
             dT_off += (time_spec_.dt_down*ms);;
-        }
+        //}
       
         return {dT_on, dT_off};
 
@@ -261,9 +261,9 @@ public:
     rti::rangeshifter*
     characterize_rangeshifter(
         const rti::dataset* ds,
-        rti::modality_type m)
+        rti::modality_type mod)
     {
-        auto seq_tags = &rti::seqtags_per_modality.at(m);
+        auto seq_tags = &rti::seqtags_per_modality.at(mod);
         //1. rangeshifter sequence
         auto  rs_ds = (*ds)( seq_tags->at("rs")) ;
         assert(rs_ds.size() >=1);
@@ -322,9 +322,9 @@ public:
     rti::aperture*
     characterize_aperture(
         const rti::dataset* ds,
-        rti::modality_type m
+        rti::modality_type mod
     ){
-        auto seq_tags = &rti::seqtags_per_modality.at(m);
+        auto seq_tags = &rti::seqtags_per_modality.at(mod);
 
         std::vector<std::string> stmp;
         std::vector<float> ftmp;
@@ -340,7 +340,7 @@ public:
         std::cout<<"BlockThickness and Position (center) : " << lxyz.z <<", " << pxyz.z <<" mm"<< std::endl;
         rti::mat3x3<float> rxyz(0.0, 0.0, 0.0);
         //3. x-y points for opening
-        auto xypts = this->characterize_aperture_opening(ds,m);
+        auto xypts = this->characterize_aperture_opening(ds,mod);
 		bool is_rectangle = ( lxyz.y == 0 ) ? false : true;
         return new rti::aperture(xypts, lxyz, pxyz, rxyz, is_rectangle);
     }

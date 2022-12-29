@@ -53,8 +53,8 @@ public:
     /// \param m a modality type, e.g., ION Plan or ION Record
     beam_module_ion(
         const rti::dataset* d,
-        rti::modality_type m)
-        :beam_module(d,m)
+        rti::modality_type mod)
+        :beam_module(d,mod)
     {
         /// Initializes containers
         std::vector<int>         nb_pts(1)  ;
@@ -83,7 +83,7 @@ public:
         /// Fill the containers from the DICOM dataset
         /// As each layer consists of pair of ion-controls and even-layers have all zero weights.
         /// So we drop even layer.
-        auto seq_tags = &rti::seqtags_per_modality.at(m);
+        auto seq_tags = &rti::seqtags_per_modality.at(mod);
         auto ictrl    = (*ds_)(seq_tags->at("ctrl"));
         for(auto b : ictrl){
             

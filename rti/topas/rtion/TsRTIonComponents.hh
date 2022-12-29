@@ -54,8 +54,7 @@ protected:
         rti::coordinate_transform<float>& p
     );
 
-	bool
-	ExportDoseGridToParameters(
+    void ExportDoseGridToParameters(
 		rti::rect3d<float, float>& dg, 
 		rti::vec3<float>& ct_p,
 		rti::vec3<float>& trans_p);

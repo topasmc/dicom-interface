@@ -87,7 +87,7 @@ public:
     
     /// Returns size of beamlets.
     /// \return total number of beamlets
-    const std::size_t
+    std::size_t
     total_beamlets() const
     {
         return beamlets_.size();
@@ -95,29 +95,27 @@ public:
 
     /// Returns total number of histories
     /// \return total number of histories
-    const std::size_t
-    total_histories()
+    std::size_t
+    total_histories() const
     {    
         return this->total_beamlets() == 0 ? 
             0 : std::get<2>(beamlets_.back());
     }
 
     /// Returns a tuple for given beamlet id.
-    /// \return a tuple of beamlet, histories, and accumulated histories
-    const 
+    /// \return a tuple of beamlet, histories, and accumulated histories 
     std::tuple<rti::beamlet<T>, size_t, size_t>& 
     operator[]
-    (unsigned int i)const
+    (unsigned int i)
     {
         return beamlets_[i];
     }
 
     /// Returns a beamlet of a history
     /// \return a beamlet reference (const)
-    const
     rti::beamlet<T>&
     operator()
-    (size_t h)
+    (size_t h) const
     {
         size_t beamlet_id = cdf2beamlet_.upper_bound(h)->second;
         return std::get<0>(beamlets_[beamlet_id]);

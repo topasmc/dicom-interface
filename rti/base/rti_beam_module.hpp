@@ -23,8 +23,8 @@ protected:
     
 public:
     beam_module(const rti::dataset* d,
-                rti::modality_type m)
-               :ds_(d), modality_(m)
+                rti::modality_type mod)
+               :ds_(d), modality_(mod)
     {;}
     
     ~beam_module(){;}

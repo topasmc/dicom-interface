@@ -35,17 +35,17 @@ public:
     /// Constructor
     CUDA_HOST_DEVICE
     const_1d(
-        std::array<T,1>& m, 
-        std::array<T,1>& s) 
-        : pdf_Md<T,1>(m,s)
+        std::array<T,1>& m_,
+        std::array<T,1>& s_)
+        : pdf_Md<T,1>(m_,s_)
     {;}
     
     /// Constructor
     CUDA_HOST_DEVICE
     const_1d(
-        const std::array<T,1>& m, 
-        const std::array<T,1> &s)
-        : pdf_Md<T,1>(m,s) 
+        const std::array<T,1>& m_,
+        const std::array<T,1> &s_)
+        : pdf_Md<T,1>(m_,s_)
     {;}
 
     /// Returns mean_ 

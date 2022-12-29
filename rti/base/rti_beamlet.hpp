@@ -61,12 +61,11 @@ public:
 
     /// Creates a copy beamlet from assignment operator
     CUDA_HOST_DEVICE
-    beamlet(const beamlet<T>& rhs)
-    {
-        energy   = rhs.energy;
-        fluence  = rhs.fluence;
-        p_coord  = rhs.p_coord;
-    }
+    beamlet(const beamlet<T>& rhs) :
+     energy (rhs.energy ),
+     fluence(rhs.fluence),
+     p_coord(rhs.p_coord)
+    {;}
 
     /// Set coordinate transform from outside.
     /// \param p coordinate_transform consisting of translation and rotation
@@ -96,7 +95,6 @@ public:
         return vtx;
         
     };
-
 };
 
 }

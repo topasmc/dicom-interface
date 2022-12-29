@@ -71,9 +71,9 @@ public:
 
     /// Copy constructor
     geometry(const geometry& rhs)
-    : geotype(rhs.geotype),
-      pos(rhs.pos),
-      rot(rhs.rot)
+    : pos(rhs.pos),
+      rot(rhs.rot) ,
+      geotype(rhs.geotype)
     {;}
 
     /// Assignment operator

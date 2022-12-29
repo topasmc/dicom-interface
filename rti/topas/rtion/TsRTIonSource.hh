@@ -37,8 +37,7 @@ protected:
     //Get corrdinate system first
     rti::coordinate_transform<float> rt_coordinate;
 
-    bool
-    ExportDICOMCoordinateToParameters(
+    void ExportDICOMCoordinateToParameters(
         rti::coordinate_transform<float>& p
     );
 

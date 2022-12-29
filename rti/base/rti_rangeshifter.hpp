@@ -25,16 +25,16 @@ public:
         rti::vec3<float>& p,    ///< position
         rti::mat3x3<float>& r,  ///< rotation matrix
         bool is_rect=true) 
-    : volume(v), 
-      is_rectangle(is_rect), 
-      geometry(p, r, rti::geometry_type::RANGESHIFTER)
+    : geometry(p, r, rti::geometry_type::RANGESHIFTER),
+      is_rectangle(is_rect),
+      volume(v)
     {;}
 
     /// Copy constructor
     rangeshifter(const rti::rangeshifter& rhs)
-    : volume(rhs.volume),
-      is_rectangle(rhs.is_rectangle), 
-      geometry(rhs.pos, rhs.rot, rhs.geotype)
+    : geometry(rhs.pos, rhs.rot, rhs.geotype),
+      is_rectangle(rhs.is_rectangle),
+      volume(rhs.volume)
     {;}
 
     /// Destructor

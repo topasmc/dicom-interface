@@ -37,18 +37,18 @@ public:
     /// Constructor to initialize distribution parameters
     CUDA_HOST_DEVICE
     phsp_6d_fanbeam(
-        std::array<T,6>& m,  ///< [x_min, x_max, y_min, y_max, z_min, z_max] 
-        std::array<T,6>& s,  ///< [sig_x, sig_y, sig_z, sig_x', sig_y', sig_z']
-        std::array<T,2>& r,  ///< rho_ correlation of x,x' and y,y'
-        std::array<T,2>& o   ///< [SADx, SADy]
-    ) : pdf_Md<T,6>(m,s), 
-	    rho_(r), 
-	    SAD_(o) 
+        std::array<T,6>& m_,  ///< [x_min, x_max, y_min, y_max, z_min, z_max]
+        std::array<T,6>& s_,  ///< [sig_x, sig_y, sig_z, sig_x', sig_y', sig_z']
+        std::array<T,2>& r_,  ///< rho_ correlation of x,x' and y,y'
+        std::array<T,2>& o_   ///< [SADx, SADy]
+    ) : pdf_Md<T,6>(m_,s_),
+        rho_(r_),
+        SAD_(o_)
     {
 	    #if !defined(__CUDACC__)
         gen_.seed(std::chrono::system_clock::now().time_since_epoch().count());
-        unifx_ = std::uniform_real_distribution<T>(m[0], m[1]); 
-        unify_ = std::uniform_real_distribution<T>(m[2], m[3]); 
+        unifx_ = std::uniform_real_distribution<T>(m_[0], m_[1]);
+        unify_ = std::uniform_real_distribution<T>(m_[2], m_[3]);
         func_ = std::normal_distribution<T>(0, 1); 
         #endif
     }
@@ -56,18 +56,18 @@ public:
     /// Constructor to initialize distribution parameters
     CUDA_HOST_DEVICE
     phsp_6d_fanbeam(
-	    const std::array<T,6>& m,  ///< [x_min, x_max, y_min, y_max, z_min, z_max]     
-        const std::array<T,6>& s,  ///< [sig_x, sig_y, sig_z, sig_x', sig_y', sig_z']
-        const std::array<T,2>& r,  ///< rho_ correlation of x,x' and y,y'
-        const std::array<T,2>& o   ///< [SADx, SADy]
-    ) : pdf_Md<T,6>(m,s), 
-	    rho_(r), 
-	    SAD_(o) 
+        const std::array<T,6>& m_,  ///< [x_min, x_max, y_min, y_max, z_min, z_max]
+        const std::array<T,6>& s_,  ///< [sig_x, sig_y, sig_z, sig_x', sig_y', sig_z']
+        const std::array<T,2>& r_,  ///< rho_ correlation of x,x' and y,y'
+        const std::array<T,2>& o_   ///< [SADx, SADy]
+    ) : pdf_Md<T,6>(m_,s_),
+        rho_(r_),
+        SAD_(o_)
     {
 	    #if !defined(__CUDACC__)
         gen_.seed(std::chrono::system_clock::now().time_since_epoch().count());
-        unifx_ = std::uniform_real_distribution<T>(m[0], m[1]); 
-        unify_ = std::uniform_real_distribution<T>(m[2], m[3]); 
+        unifx_ = std::uniform_real_distribution<T>(m_[0], m_[1]);
+        unify_ = std::uniform_real_distribution<T>(m_[2], m_[3]);
         func_ = std::normal_distribution<T>(0, 1); 
         #endif
     }

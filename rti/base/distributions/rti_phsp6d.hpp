@@ -36,10 +36,10 @@ public:
     /// gen_.seed(from outside, topas or UI); //Ideally set from TOPAS?
     CUDA_HOST_DEVICE
     phsp_6d(
-        std::array<T,6>& m, 
-        std::array<T,6>& s,
-        std::array<T,2>& r) 
-    : pdf_Md<T,6>(m,s), rho_(r) 
+        std::array<T,6>& m_,
+        std::array<T,6>& s_,
+        std::array<T,2>& r_)
+    : pdf_Md<T,6>(m_,s_), rho_(r_)
     {
         #if !defined(__CUDACC__)
         gen_.seed(std::chrono::system_clock::now().time_since_epoch().count());
@@ -50,10 +50,10 @@ public:
     /// Constructor to initializes mean, sigma, rho, and random engine
     CUDA_HOST_DEVICE
     phsp_6d(
-        const std::array<T,6>& m, 
-        const std::array<T,6> &s,
-        const std::array<T,6>& r)
-    : pdf_Md<T,6>(m,s), rho_(r)
+        const std::array<T,6>& m_,
+        const std::array<T,6>& s_,
+        const std::array<T,6>& r_)
+    : pdf_Md<T,6>(m_,s_), rho_(r_)
     {
         #if !defined(__CUDACC__)
         gen_.seed(std::chrono::system_clock::now().time_since_epoch().count());

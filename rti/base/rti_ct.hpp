@@ -85,7 +85,8 @@ public:
         size_t nz = files_.size() ; ///< number of images. 
         rect3d<int16_t, R>::z_ = new R[nz];
         rect3d<int16_t, R>::dim_.z = nz;
-        double x0, y0;
+        double x0{0};
+        double y0{0};
         
         for(size_t i = 0 ; i < nz ; ++i){
             gdcm::Scanner::TagToValue const &m0 = s.GetMapping(files_[i].c_str());

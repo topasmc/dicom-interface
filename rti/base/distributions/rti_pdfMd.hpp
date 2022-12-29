@@ -38,24 +38,24 @@ public:
     /// Constructor to fill mean_ and sigma_ 
     CUDA_HOST_DEVICE
     pdf_Md(
-        std::array<T,M>& m, 
-        std::array<T,M>& s)
+        std::array<T,M>& m_,
+        std::array<T,M>& s_)
     {
         for(std::size_t i=0; i < M ; ++i){
-            mean_[i] = m[i];
-            sigma_[i] = s[i];
+            mean_[i] = m_[i];
+            sigma_[i] = s_[i];
         }
     }
 
     /// Constructor to fill const mean_ and const sigma_ 
     CUDA_HOST_DEVICE
     pdf_Md(
-        const std::array<T,M>& m, 
-        const std::array<T,M> &s)
+        const std::array<T,M>& m_,
+        const std::array<T,M>& s_)
     {
         for(std::size_t i=0; i < M ; ++i){
-            mean_[i] = m[i];
-            sigma_[i] = s[i];
+            mean_[i] = m_[i];
+            sigma_[i] = s_[i];
         }
     }
     

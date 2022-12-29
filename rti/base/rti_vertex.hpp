@@ -14,9 +14,9 @@ namespace rti{
 template<typename T>
 struct vertex_t
 {
-	 T          ke   ;  //< kinetic energy
-	 vec3<T>    pos  ;  //< position
-	 vec3<T>    dir  ;  //< direction
+     T          ke {} ;  //< kinetic energy
+     vec3<T>    pos{} ;  //< position
+     vec3<T>    dir{} ;  //< direction
 
 	 CUDA_HOST_DEVICE
 	 vertex_t<T>&
@@ -27,6 +27,18 @@ struct vertex_t
 		 dir = rhs.dir;
 		 return *this;
 	 }
+
+     /// Copy assignment constructor
+     CUDA_HOST_DEVICE
+     vertex_t<T>(const vertex_t<T>& rhs) :
+         ke (rhs.ke ),
+         pos(rhs.pos),
+         dir(rhs.dir)
+     {;}
+
+     CUDA_HOST_DEVICE
+     vertex_t<T>()
+     {;}
 };
 
 }
