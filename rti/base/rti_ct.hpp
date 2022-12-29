@@ -16,14 +16,14 @@
 
 namespace rti{
 
-/// \class ct 
+/// \class ct
 /// this ct class is a int16_t pixel type.
 /// \tparam R for grid coordinate (float or double) a type of x, y, and z positions
 template<typename R>
 class ct : public rect3d<int16_t, R> {
 protected:
 
-    std::vector<std::string>   files_   ; ///<  DICOM image files sorted in Z acsending order 
+    std::vector<std::string>   files_   ; ///<  DICOM image files sorted in Z acsending order
 
     std::map<std::string, std::string> uid2file_ ; ///< SOP instance UID to id in files_
 
@@ -32,22 +32,22 @@ protected:
     R dx_; ///< pixel size in X
     R dy_; ///< pixel size in Y
 
-public: 
-    
+public:
+
     /// Default constructor
     CUDA_HOST
     ct(){;}
 
     ~ct() { delete[] ct_dir; }
 
-    /// Constructs a rectlinear grid from array of x/y/z with their size 
+    /// Constructs a rectlinear grid from array of x/y/z with their size
     /// \param f CT directory
     /// \param is_print set true if you want to print out files (UNUSED)
-    /// \note this method sets only dimensions and extensions. 
+    /// \note this method sets only dimensions and extensions.
     /// \see load_data() to read in pixel data
     CUDA_HOST
     ct(
-        std::string f, 
+        std::string f,
         bool is_print=false)
     {
         (void)is_print;//unused
@@ -57,38 +57,38 @@ public:
         //http://gdcm.sourceforge.net/html/SortImage_8cxx-example.html#_a5
         gdcm::Directory dir;
         dir.Load(ct_dir, false); ///< non-recursive
-        
+
         const gdcm::Directory::FilenamesType& all_files = dir.GetFilenames();
-    
+
         gdcm::Scanner scanner ;
         const gdcm::Tag ct_tag = gdcm::Tag(0x08, 0x60);
         scanner.AddTag(ct_tag);
         scanner.Scan(all_files);
 
         auto ct_files = scanner.GetAllFilenamesFromTagToValue(ct_tag, "CT" );
-        
+
         gdcm::IPPSorter ippsorter;
         ippsorter.SetComputeZSpacing(false);
         ippsorter.Sort(ct_files); ///< asending along z
         files_ = ippsorter.GetFilenames();
 
         gdcm::Scanner s;
-        s.AddTag( gdcm::Tag(0x0008,0x0018) ); ///< SOP instance UID 
-        s.AddTag( gdcm::Tag(0x0020,0x0032) ); ///< Image Position (Patient) 
-        s.AddTag( gdcm::Tag(0x0028,0x0010) ); ///< Rows 
-        s.AddTag( gdcm::Tag(0x0028,0x0011) ); ///< Columns 
-        s.AddTag( gdcm::Tag(0x0028,0x0030) ); ///< Pixel spacing 
+        s.AddTag( gdcm::Tag(0x0008,0x0018) ); ///< SOP instance UID
+        s.AddTag( gdcm::Tag(0x0020,0x0032) ); ///< Image Position (Patient)
+        s.AddTag( gdcm::Tag(0x0028,0x0010) ); ///< Rows
+        s.AddTag( gdcm::Tag(0x0028,0x0011) ); ///< Columns
+        s.AddTag( gdcm::Tag(0x0028,0x0030) ); ///< Pixel spacing
 
         if (!s.Scan( files_ )) assert("scan fail.");
-    
-        size_t nx ;                 ///< columns 
-        size_t ny ;                 ///< rows 
-        size_t nz = files_.size() ; ///< number of images. 
+
+        size_t nx = 0;              ///< columns
+        size_t ny = 0;              ///< rows
+        size_t nz = files_.size() ; ///< number of images.
         rect3d<int16_t, R>::z_ = new R[nz];
         rect3d<int16_t, R>::dim_.z = nz;
         double x0{0};
         double y0{0};
-        
+
         for(size_t i = 0 ; i < nz ; ++i){
             gdcm::Scanner::TagToValue const &m0 = s.GetMapping(files_[i].c_str());
 
@@ -96,14 +96,14 @@ public:
             unsigned int deli0 = img_position.find_first_of( '\\' );
             unsigned int deli1 = img_position.find_last_of( '\\' );
             rect3d<int16_t, R>::z_[i] = (R) (std::stod( img_position.substr(deli1+1) ));
-    
+
             ///< We only determine rows, colums, x0, y0, dx, and dy with first image
             if(i==0){
                 x0 = std::stod(img_position.substr(0,deli0));
                 y0 = std::stod(img_position.substr(deli0+1, deli1-deli0));
 
                 ny = std::stoi(m0.find(gdcm::Tag(0x0028,0x0010))->second);
-                nx = std::stoi(m0.find(gdcm::Tag(0x0028,0x0011))->second); 
+                nx = std::stoi(m0.find(gdcm::Tag(0x0028,0x0011))->second);
                 rect3d<int16_t, R>::dim_.x = nx;
                 rect3d<int16_t, R>::dim_.y = ny;
                 std::string  pixel_spacing(m0.find(gdcm::Tag(0x0028,0x0030))->second) ;
@@ -112,7 +112,7 @@ public:
                 dy_ = std::stod(pixel_spacing.substr(deli+1));
 
             }
-            
+
             ///< A map to search file path upon instance UID
             uid2file_.insert(std::make_pair(m0.find(gdcm::Tag(0x0008,0x0018))->second, files_[i]));
         }
@@ -127,15 +127,15 @@ public:
         }
         std::cout<<"CT (nx,ny,nz): (" << nx << ", " << ny <<", " << nz <<")" << std::endl;
         std::cout<<"CT (dx,dy,dz): (" << dx_ << ", " << dy_ <<", " << rect3d<int16_t, R>::z_[1] - rect3d<int16_t, R>::z_[0] <<")" << std::endl;
-        std::cout<<"CT (x,y,z): (" << rect3d<int16_t, R>::x_[0] 
-                                   << ", " << rect3d<int16_t, R>::y_[0] 
+        std::cout<<"CT (x,y,z): (" << rect3d<int16_t, R>::x_[0]
+                                   << ", " << rect3d<int16_t, R>::y_[0]
                                    <<", "  << rect3d<int16_t, R>::z_[0] << ")" << std::endl;
 
     }
 
     /// Load patient's image to volume
     CUDA_HOST
-    virtual 
+    virtual
     void
     load_data()
     {
@@ -147,18 +147,18 @@ public:
         float slope     = 1;
 
         for(size_t i=0 ; i <  rect3d<int16_t,R>::dim_.z; ++i){
-            
-            gdcm::ImageReader reader;    
+
+            gdcm::ImageReader reader;
             reader.SetFileName(files_[i].c_str());
             reader.Read();
             const gdcm::Image& img  = reader.GetImage();
-            
+
             //n_x * n_y * bytes = img.GetBufferLength()
             intercept = float(img.GetIntercept());
             slope     = float(img.GetSlope());
-            
+
             gdcm::PixelFormat pixeltype = img.GetPixelFormat();
-            
+
             switch( pixeltype )
             {
             case gdcm::PixelFormat::INT16:
@@ -175,17 +175,17 @@ public:
     }
 
     /// Returns x-index for given x position
-    inline virtual 
+    inline virtual
     size_t
     find_c000_x_index(const R& x)
-    {   
+    {
         assert( (x >= rect3d<int16_t,R>::x_[0]) && (x < rect3d<int16_t,R>::x_[rect3d<int16_t,R>::dim_.x-1]) );
         assert( dx_ > 0 );
         return floor(x/dx_);
     }
 
     /// Returns y-index for given y position
-    inline virtual 
+    inline virtual
     size_t
     find_c000_y_index(const R& y)
     {
