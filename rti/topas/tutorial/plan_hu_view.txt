@@ -1,0 +1,23 @@
+includeFile  = plan_hu.txt
+
+Ts/PauseBeforeSequence = "True"
+Ts/PauseBeforeQuit     = "True"
+
+d:Gr/MyOGLb/Theta = 10. deg
+d:Gr/MyOGLb/Phi   = 50. deg
+b:Gr/MyOGLb/IncludeTrajectories = "t"
+
+s:Gr/MyOGLb/Type = "OpenGL"
+i:Gr/MyOGLb/WindowSizeX = 1000
+i:Gr/MyOGLb/WindowSizeY = 800
+i:Gr/MyOGLb/WindowPosX = 0
+i:Gr/MyOGLb/WindowPosY = 600
+s:Gr/MyOGLb/ColorBy = "particletype"
+b:Gr/MyOGLb/IncludeAxes = "true"
+s:Gr/MyOGLb/AxesComponent = "World"
+d:Gr/MyOGLb/AxesSize = 20.0 cm
+u:Gr/MyOGLb/Zoom = 1
+s:Gr/MyOGLb/Projection = "Perspective"
+d:Gr/MyOGLb/PerspectiveAngle = 10.0 deg
+
+#b:Ts/UseQt = "T"
