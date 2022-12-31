@@ -1,5 +1,5 @@
 #includeFile  = beam.txt
-includeFile = QA_tutorial.txt
+#includeFile = QA_tutorial.txt
 #includeFile = plan_tutorial.txt
 
 Ts/PauseBeforeSequence = "True"

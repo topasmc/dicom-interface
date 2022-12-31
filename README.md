@@ -26,20 +26,21 @@ Beamline geometries, gantry and patient coordinate systems, and fluence map are 
 ### Requirements
 
 - **[GDCM](http://gdcm.sourceforge.net)** (tested versions are 2.4 and 2.6.) library (header and objects) is required.
-  tested versions are 2.4 and 2.6.
+  tested versions are 2.4 and 2.6.8
   version 3.0 doesn't work with RTI (thank to Dohyeon).
 
 ### Monte Carlo 
 
-- **[TOPAS](http://www.topasmc.org)** are tested for versions 3.1, 3.2, and 3.5.
+- **[TOPAS](http://www.topasmc.org)** are tested for versions 3.1, 3.2, 3.5, 3.7, and 3.9
 
 ### Tested operating systems
   - Mac OS X
-    - 10.14.5, clang++ (LLVM version 10.0.1, /usr/bin/c++)
-    - cmake version 3.x
+    - 10.14.5, clang++ (LLVM version 10.0.1, /usr/bin/c++) 
+    - 12.6.2,  clang++ (LLVM version 14.0.0, /usr/bin/c++) with topas 3.9
+    - cmake version 3.24
   - Linux
     - Red Hat Enterprise Linux Server release 6.7 g++ (4.9.0)
-    - Ubuntu 19.10  
+    - Ubuntu 19.10
   
 ### Installation
 
@@ -49,13 +50,20 @@ $ cd /<your_sw_path>/
 $ git clone https://github.com/topasmc/dicom-interface rti.git
 ```
 
+If you are compiling dicom-interface with topas releases ( not from source), you need to use same headers of gdcm that topas used.
+```bash
+$ cd /<your_sw_path>/rti.git
+$ tar -zxf gdcm-2.6.include.tar.gz
+$ ls gdcm-2.6
+```
+
 Then, go to the directory where your topas is installed. 
 
 ```bash
 $ cd /<your_topas_path>/
 ```
 
-Add two lines in CMakeList.txt as following:
+Add two lines in CMakeList.txt (in TOPAS) as following:
 ```cmake
 include_directories (
     ${CMAKE_BINARY_DIR}
@@ -63,7 +71,7 @@ include_directories (
     ${PROJECT_SOURCE_DIR}/Geant4Headers
     ${PROJECT_SOURCE_DIR}/include
     /<your_sw_path>/rti.git/
-    /<your_gdcm_include_path>/gdcm-<version>/
+    /<your_sw_path>/rti.git/gdcm-2.6
 )
 ```
 
@@ -76,7 +84,7 @@ $ make -j4
 ### Run a test
 
 ```bash
-$ cd /your_sw_path/rti.git/test/topas/
+$ cd /your_sw_path/rti.git/topas/tutorial/
 $ topas beam_view.txt
 ```
 

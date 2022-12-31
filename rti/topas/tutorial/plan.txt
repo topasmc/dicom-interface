@@ -83,11 +83,11 @@ s:Ge/Patient/Material = "G4_WATER"
 s:Ge/Patient/DicomDirectory      = Rt/RTION/CTDirectory
 s:Ge/Patient/CloneRTDoseGridFrom = Rt/RTION/DoseFile
 d:Ge/Patient/TransX   = 0.0 mm 
-d:Ge/Patient/TransY   = 0.0 mm
+d:Ge/Patient/TransY   = -200.0 mm
 d:Ge/Patient/TransZ   = 0.0 mm 
 
 d:Ge/Patient/RotX     = 0. deg
-d:Ge/Patient/RotY     = 0. deg
+d:Ge/Patient/RotY     = 90. deg
 d:Ge/Patient/RotZ     = 0. deg
 # Specify which slices to show.
 # Comment this out or set to zero to show all slices.
