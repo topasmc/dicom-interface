@@ -25,9 +25,8 @@ Beamline geometries, gantry and patient coordinate systems, and fluence map are 
 
 ### Requirements
 
-- **[GDCM](http://gdcm.sourceforge.net)** (tested versions are 2.4 and 2.6.) library (header and objects) is required.
-  tested versions are 2.4 and 2.6.8
-  version 3.0 doesn't work with RTI (thank to Dohyeon).
+- **[GDCM](http://gdcm.sourceforge.net)** 
+  tested versions are 2.4, 2.6.8, and 3.0.
 
 ### Monte Carlo 
 
@@ -40,6 +39,7 @@ Beamline geometries, gantry and patient coordinate systems, and fluence map are 
     - cmake version 3.24
   - Linux
     - Red Hat Enterprise Linux Server release 6.7 g++ (4.9.0)
+    - Ubuntu 12.0 with gcc 11
     - Ubuntu 19.10
   
 ### Installation

@@ -25,6 +25,7 @@ Ph/Default/Modules = 1 "g4em-standard_opt4"
 #----------------- Scorers --------------------
 ####################################################
 #----------------- Dose --------------------
+s:Sc/DoseGrid_Dw/Quantity    = "DoseToWater"
 s:Sc/DoseGrid_Dw/Component   = "Patient/RTDoseGrid" 
 s:Sc/DoseGrid_Dw/OutputFile  = "Dw_patient" 
 s:Sc/DoseGrid_Dw/OutputType  = "binary" 
