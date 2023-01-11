@@ -276,7 +276,7 @@ TsRTIonComponents::Construct()
 				} //default grid
 			}	 //rtdosefile
 
-#if TOPAS_VERSION_MAJOR >= 3  && TOPAS_VERSION_MINOR >= 2
+#if (TOPAS_VERSION_MAJOR >= 3  && TOPAS_VERSION_MINOR >= 2) || TOPAS_VERSION_MAJOR >= 4
     InstantiateChild(fName + "/DoseGrid")->Construct();
 #else
 	InstantiateChild(fName + "/DoseGrid", fParentVolume)->Construct();

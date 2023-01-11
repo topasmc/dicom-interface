@@ -25,8 +25,15 @@ Beamline geometries, gantry and patient coordinate systems, and fluence map are 
 
 ### Requirements
 
+<<<<<<< HEAD
 - **[GDCM](http://gdcm.sourceforge.net)** 
   tested versions are 2.4, 2.6.8, and 3.0.
+=======
+- **[GDCM](http://gdcm.sourceforge.net)** (tested versions are 2.4 and 2.6.) library (header and objects) is required.
+  tested versions are 2.4 and 2.6.8
+  
+  Gdcm version 3.0 works with RTI if you compile TOPAS 3.9 from source instead of using the binary package.
+>>>>>>> origin/master
 
 ### Monte Carlo 
 
@@ -41,6 +48,7 @@ Beamline geometries, gantry and patient coordinate systems, and fluence map are 
     - Red Hat Enterprise Linux Server release 6.7 g++ (4.9.0)
     - Ubuntu 12.0 with gcc 11
     - Ubuntu 19.10
+    - Ubuntu 22.04 (gcc 11.3)
   
 ### Installation
 
