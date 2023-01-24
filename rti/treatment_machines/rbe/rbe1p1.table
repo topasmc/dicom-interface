@@ -17,7 +17,7 @@ aperture(mm) 70 0 #circle
 "70mm" 70
 
 [spot]
-# Nominal Energy (MeV), Energy(MeV), Energy Spread (MeV), x (cm), y (cm), xp (rad), yp (rad), ratio
+# Nominal Energy (MeV), Energy(MeV), Energy Spread (MeV), x (mm), y (mm), xp (rad), yp (rad), ratio
 60.0     60.0  0.0    0.8    0.7   0.0    0.0    1.0
 250.0   250.0  0.0    0.5    0.0   0.0    0.0    1.0
 
