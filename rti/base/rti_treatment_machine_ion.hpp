@@ -141,7 +141,6 @@ public:
 	///< Modulated BEAM
 	const auto&  spots    = *(ion_beam.get_sequence());
 	const size_t nb_spots = spots.size();
-	const rti::beam_module_ion::spot* null_spot = nullptr;
 
 	for(size_t i = 0 ; i < nb_spots ; ++i){
 	    /// Calculate number of histories to be simulated per beamlet
@@ -151,22 +150,22 @@ public:
 	    /// Calculate on & off time per beamlet
 	    /// By default, on is set to 1 sec but off is set to 0 sec.
 	    std::array<T, 2> time_on_off ;
+
 	    if( i == (nb_spots - 1)){
-		time_on_off = this->characterize_beamlet_time(spots[i], *null_spot);
+            time_on_off = this->characterize_beamlet_time(spots[i], spots[i]);
 	    }else{
-		time_on_off = this->characterize_beamlet_time(spots[i], spots[i+1]);
+            time_on_off = this->characterize_beamlet_time(spots[i], spots[i+1]);
 	    }
 
 	    /// Then, add a beamlet with
 	    ///            its number of histories,
 	    ///            coordinate system
 	    ///            beamlet time on/off
-	    beamsource.append_beamlet(
-		this->characterize_beamlet(spots[i]),
-		nb_histories,
-		pcoord,
-		time_on_off[0],
-		time_on_off[1]);
+	    beamsource.append_beamlet(this->characterize_beamlet(spots[i]),
+                                  nb_histories,
+                                  pcoord,
+                                  time_on_off[0],
+                                  time_on_off[1]);
 
 	}
         return beamsource;
@@ -188,7 +187,7 @@ public:
     {
         (void)s_current;//unused
         (void)s_next;//unused
-	return {1.0, 0.0};
+        return {1.0, 0.0};
     }
 	//			      const bool meterset_is_mu = false
  

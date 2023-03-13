@@ -238,24 +238,22 @@ public:
 
 		/// calculate beam-off time after beam is delivered.
         /// except last beamlet
-        //if( &s_next != nullptr){
-            if (s_next.e != s_curr.e){
-                /// Layer change.
-                /// Note: The spot-settling time is not required or included in layer-switching time.
-                dT_off = time_spec_.e*sec;
-            }else{
-                /// When a spot moves in same layer
-                /// Calculate time required to move spot to next and add 
-                const T dTx = std::abs(s_next.x - s_curr.x)/(time_spec_.vx * m/sec);
-                const T dTy = std::abs(s_next.y - s_curr.y)/(time_spec_.vy * m/sec);
-                if( dTx > 0 || dTy > 0)
-					dT_off = (dTy >= dTx) ? dTy + (time_spec_.set_y * ms) :	dTx + (time_spec_.set_x * ms) ;
-            }
+        if (s_next.e != s_curr.e){
+            /// Layer change.
+            /// Note: The spot-settling time is not required or included in layer-switching time.
+            dT_off = time_spec_.e*sec;
+        }else{
+            /// When a spot moves in same layer
+            /// Calculate time required to move spot to next and add 
+            const T dTx = std::abs(s_next.x - s_curr.x)/(time_spec_.vx * m/sec);
+            const T dTy = std::abs(s_next.y - s_curr.y)/(time_spec_.vy * m/sec);
+            if( dTx > 0 || dTy > 0)
+                dT_off = (dTy >= dTx) ? dTy + (time_spec_.set_y * ms) :	dTx + (time_spec_.set_x * ms) ;
+        }
       
-            ///add latencies (up and down)
-            dT_off += (time_spec_.dt_up*ms);
-            dT_off += (time_spec_.dt_down*ms);;
-        //}
+        ///add latencies (up and down)
+        dT_off += (time_spec_.dt_up*ms);
+        dT_off += (time_spec_.dt_down*ms);;
       
         return {dT_on, dT_off};
 
