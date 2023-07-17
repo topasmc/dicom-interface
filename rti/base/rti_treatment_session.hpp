@@ -21,6 +21,8 @@
 //Custom treatment machines
 #include <rti/treatment_machines/rbe/rbe_1p1.hpp>
 
+#include <rti/treatment_machines/smc/rti_treatment_machine_smc_g2.hpp>
+
 namespace rti {
 
 /// \class treatment_session
