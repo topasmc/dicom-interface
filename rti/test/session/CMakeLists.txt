@@ -19,9 +19,10 @@ endif()
 
 include_directories (
     ${PROJECT_SOURCE_DIR}
-  	/opt/sw/dicom-interface/git.public.20221230/gdcm-2.6
+    /opt/sw/dicom-interface/git.public.20221230/gdcm-2.6
     ../../../
 )
+
 link_directories (
     ${PROJECT_SOURCE_DIR}
     /opt/sw/topas/3.9.0/Frameworks/ 

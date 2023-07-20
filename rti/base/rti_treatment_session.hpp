@@ -20,7 +20,6 @@
 
 //Custom treatment machines
 #include <rti/treatment_machines/rbe/rbe_1p1.hpp>
-
 #include <rti/treatment_machines/smc/rti_treatment_machine_smc_g2.hpp>
 
 namespace rti {
@@ -179,7 +178,10 @@ public:
             else{
                 throw std::runtime_error("Valid machine is not available.");
             }
-
+            
+        }else if(! machine_name.compare("smc:g2") ){
+            tx_machine_ = new rti::smc::g2<T>;
+            return true;
         }else{
             throw std::runtime_error("Valid site is not available.");
         }

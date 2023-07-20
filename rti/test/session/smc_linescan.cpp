@@ -64,18 +64,22 @@ int main(int argc, char** argv){
     seq_tags_ = &rti::seqtags_per_modality.at(mtype_);
 
     beam_ds = (*rti_ds_)( seq_tags_->at("beam"))[beam_idx];
-
+    // available only for Beam0
+    //(300a, 0308) Scan Mode                           CS: 'LINE'
+    //(300a, 030a) Virtual Source-Axis Distances       FL: [2597.0, 2223.0]
     describe(beam_ds);
 
     //rti::beam_module_ion ion_beam(beam_ds, mtype_);
     std::string tune_id_;
-    std::vector<int>         nb_pts(1)  ;
+    std::vector<std::string> nb_pts(1)  ;
     std::vector<float>       energy(1)  ;
     std::vector<float>       fwhm_xy(2) ;
     std::vector<std::string> tune_id(1) ;
     std::vector<float> xy     ; 
     std::vector<float> weight ; 
 
+    std::vector<int> nb_spots_per_layer_;
+    std::vector<rti::beam_module_ion::spot> sequence_;
     
     int layer_nb = 0;
     auto seq_tags = &rti::seqtags_per_modality.at(mtype_);
@@ -83,50 +87,36 @@ int main(int argc, char** argv){
     for(auto b : ictrl){
             
         if ( (layer_nb++)%2) continue;
-        //b->get_values("ScanSpotTuneID", tune_id);
-        b->get_values("NominalBeamEnergy", energy);
-        std::cout <<"Energy: " << energy[0] << "\n";
-        //b->get_values("NumberOfScanSpotPositions", nb_pts) ;
-        //b->get_values("ScanningSpotSize", fwhm_xy);
-        //b->get_values("ScanSpotPositionMap", xy);
 
-        //b->get_values(str_weight.c_str(), weight); //ScanSpotmetersetweights?
-        //PrivateElementWithEmptyPrivateCreator: (300b,1094), VR: ??, length: 160
-        // tag (300b,1094)
-        // vl = 160
+        b->get_values("NominalBeamEnergy", energy);
 
         //Used for Sumitomo Line Scanning.
-        //>Line Spot Tune ID (300B,1090) SH 3 
-        //>Number of Line Scan Spot  Positions (300B,1092) IS 3 
-        //>Line Scan Position Map (300B,1094) FL 3 
+        //>Line Spot Tune ID (300B,1090) SH 3  (short string)
+        //>Number of Line Scan Spot  Positions (300B,1092) IS 3   (integer string)
+        //>Line Scan Position Map (300B,1094) FL 3  (single precision, 4 bytes)
+        //   np.frombuffer(c0[0x300b,0x1094].value, dtype=np.float32)
         //>Line Scan Meterset Weights (300B,1096) FL 3 
         //>Line Scanning Spot Size (300B,1098) FL 3 
         //>Number of Line Scan Spot Paintings (300B,109A) IS 3
-        b->dump();
+        //b->print_dataelement( (*b)[gdcm::Tag(0x300b,0x1098)] );
 
-        b->get_values( (*b)[gdcm::Tag(0x300b,0x1090)], tune_id);
-        b->get_values( (*b)[gdcm::Tag(0x300b,0x1092)], nb_pts);
-        b->get_values(gdcm::Tag(0x300b,0x1094), xy);
-        b->get_values(gdcm::Tag(0x300b,0x1096), weight);
-        b->get_values(gdcm::Tag(0x300b,0x1098), fwhm_xy);
+        b->get_values_from_element( (*b)[gdcm::Tag(0x300b,0x1090)], tune_id);
+        b->get_values_from_element( (*b)[gdcm::Tag(0x300b,0x1092)], nb_pts);
+        b->get_values_from_element( (*b)[gdcm::Tag(0x300b,0x1094)], xy);
+        b->get_values_from_element( (*b)[gdcm::Tag(0x300b,0x1096)], weight);
+        b->get_values_from_element( (*b)[gdcm::Tag(0x300b,0x1098)], fwhm_xy);
 
-        //std::cout << "Tune ID size: "<< tune_id.size() << ", value: " << tune_id[0] << "\n";
+        std::cout << "Tune ID size: "<< tune_id.size() << ", value: " << tune_id[0] << "\n";
         
-        //(*b)[gdcm::Tag(0x300b,0x1094)]; //-> gdcm::DataElement ?
-        //b->print_dataelement( (*b)[gdcm::Tag(0x300b,0x1094)] );
-        //std::cout<< "\n";
-
-        for(int j = 0 ; j < nb_pts[0] ; ++j){
-            //tune_id_ = tune_id[0];
+        for(int j = 0 ; j < std::stoi(nb_pts[0]) ; ++j){
             std::cout << energy[0] <<", "
                       << xy[j*2] << ", " << xy[j*2+1] << ", "
                       << fwhm_xy[0] << ", " << fwhm_xy[1] << ", "
                       << weight[j] << "\n";
-            //sequence_.push_back({energy[0], xy[j*2], xy[j*2+1], fwhm_xy[0], fwhm_xy[1], weight[j]});
-        }//per spot
+            sequence_.push_back({energy[0], xy[j*2], xy[j*2+1], fwhm_xy[0], fwhm_xy[1], weight[j]});
+        }//per line-segment
 
-
-        //nb_spots_per_layer_.push_back(nb_pts[0]);
+        nb_spots_per_layer_.push_back( std::stoi(nb_pts[0]));
 
     }//per layer
 

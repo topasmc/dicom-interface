@@ -280,7 +280,34 @@ public:
         }
         std::cout<<std::endl;
     }
+    
+    /// Get DICOM values in a float vector
+    /// \note this method works only for binary, i.e., bytecode
+    ///       tested only for SMC's linescanning method.
+    ///       array or vector size is determined by element's VL, bytesize
+    /// \param el DataElement 
+    /// \para
+    template<typename T>
+    void
+    get_values_from_element(const gdcm::DataElement& el,
+                            std::vector<T>& res) const
+    {
+        size_t ndim = el.GetVL() / sizeof(T);
+        res.resize(ndim);
+        el.GetByteValue()->GetBuffer( (char*)&res[0],  el.GetVL() );
+    }
 
+    /// Get DICOM value
+    /// use this function for string data, such as IS (integer string) or SS
+    void
+    get_values_from_element(const gdcm::DataElement& el,
+                            std::vector<std::string>& res) const
+    {
+        res.resize(0);
+        const gdcm::ByteValue* bv = el.GetByteValue();
+        res.push_back(std::string( bv->GetPointer(), bv->GetLength() ));
+    }
+    
     /// Get DICOM values in a float vector
     /// \param bv pointer to ByteValue
     /// \param vr DICOM Value Representation: http://dicom.nema.org/dicom/2013/output/chtml/part05/sect_6.2.html
@@ -296,13 +323,15 @@ public:
         const gdcm::VL vl,
         std::vector<float>& res )
     const
-    {
+    {   
         res.clear();
 
         if( vr & gdcm::VR::VRBINARY){
+            /// TODO:
+            //  this routine didn't work for PrivateTag
             assert(vr & gdcm::VR::FL);
 
-            size_t ndim = vl/sizeof(float); ///< T should be given 'float'
+            size_t ndim = vr.GetLength() ;
             res.resize(ndim);
             (void)vm;//unused
             /*
@@ -319,7 +348,7 @@ public:
             */
             bv->GetBuffer( (char*)&res[0],  ndim * sizeof(float)  );
         }else if( vr & gdcm::VR::VRASCII){
-            //ascii & numeric (int, float)
+                        //ascii & numeric (int, float)
             //ascii & IS, DS, -> decimal strings...
             std::string s = std::string( bv->GetPointer(), bv->GetLength() );
             size_t beg = 0;
@@ -465,7 +494,21 @@ public:
                           el.GetVL(),
                           result);
     }
-
+    
+    /// A template method to get gdcm::DataElement in a 'T' type vector
+    /// \param el DataElement
+    /// \param result reference to a "T" container for dicom values.
+    /// \tparam T type of contents.
+    /// \return void
+    template<typename T>
+    void
+    get_values(
+        const gdcm::Tag& tag,
+        std::vector<T>& result)
+    const
+    {   
+        return this->get_values( (*this)[tag], result);
+    }
 
     /// A template method to get gdcm::DataElement in a 'T' type vector
     /// \param el DataElement
@@ -478,16 +521,16 @@ public:
         const gdcm::DataElement& el,
         std::vector<T>& result)
     const
-    {
+    {   
         result.clear();
         if(el.IsEmpty()){result.resize(0); return ;}
         const gdcm::Dicts& dicts = gdcm::Global::GetInstance().GetDicts();
-        const gdcm::Tag& tag          = el.GetTag();
+        const gdcm::Tag& tag     = el.GetTag();
         const gdcm::DictEntry& entry = dicts.GetDictEntry(tag);
 
         this->get_values( el.GetByteValue(),
-                          entry.GetVR(),
-                          entry.GetVM(),
+                          entry.GetVR(),    //el.GetVR() ? 
+                          entry.GetVM(),    //el.GetVM() ? 
                           el.GetVL(),
                           result);
     }
