@@ -41,6 +41,10 @@ protected:
     const T  m  = 1000.0*mm;
     const T const_e = 1.6021766208e-19;
 
+    ///< Time factor
+    const T Vx_max = 30.0 * m/sec  ; //scan_x : maximum scan speed X
+    const T Vy_max =  3.0 * m/sec  ; //scan_y : maximum scan speed y
+    const T Te     =  2.0 * sec    ; //Time to energy change
     
     ///< spot, i.e., line-segment holder
     std::map<float,
@@ -159,15 +163,25 @@ public:
             ///< position [i, i+1) or (i, i+1] => will determine layer.size() -1 or not
             ///  meterset from i+1. meterset is not 
             for(size_t i = 0 ; i < positions.size() -1 ; ++i){
-                /*
-                std::cout << "From (" << positions[i].x  << ", " << positions[i].y << ") "
-                          << "To  (" << positions[i+1].x  << ", " << positions[i+1].y << ") "
-                          << "MU  "  << positions[i+1].meterset << "\n";
-                */
+
+
+                std::array<T, 2> time_on_off = {1.0, 0.0}; 
+                const T Tx = std::abs(positions[i+1].x - positions[i].x) / Vx_max ;
+                const T Ty = std::abs(positions[i+1].y - positions[i].y) / Vy_max ;
                 
-                std::array<T, 2> time_on_off = {1.0, 0.0}; //temporal
+                //Beam_on time > 0 always due to continous raster scan
+                //Beam_off time = 0 or Te when changing energy
+                time_on_off[0]  = (Tx > Ty) ? Tx : Ty;
+                time_on_off[1]  = ( i == (positions.size() - 2) ) ? Te : 0.0 ;
                 
                 size_t nb_histories = (scalefactor == -1) ? 1 : this->characterize_history(positions[i+1], scalefactor);
+                
+                std::cout << "From (" << positions[i].x  << ", " << positions[i].y << ") "
+                          << "To  (" << positions[i+1].x  << ", " << positions[i+1].y << ") "
+                          << "Lx, Ly  (" << std::abs(positions[i+1].x - positions[i].x)
+                          << ", "        << std::abs(positions[i+1].y - positions[i].y)<< ") "
+                          << "Time  (" << time_on_off[0]  << ", " << time_on_off[1] << ") "
+                          << "MU  "  << positions[i+1].meterset << "\n";
 
                 beamsource.append_beamlet(this->characterize_beamlet(positions[i], positions[i+1]),
                                           nb_histories,
