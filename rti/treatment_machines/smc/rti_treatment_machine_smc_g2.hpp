@@ -20,6 +20,7 @@ public:
     CUDA_HOST_DEVICE
     ~g2_material_t(){;}
 };
+
 */
     
 /**
@@ -54,14 +55,66 @@ protected:
     ///<
     std::vector<int> nb_spots_per_layer_; //maybe we don't need
 
-    ///< tunning model but not used
-    //std::string tune_id_;
+
+    ///< Beam data
     
+    // MUtoParticle = protonPerDoseCorrection * dosePerMUCountCorrection
+    struct mu_correction{
+
+        T proton_per_dose_correction ;
+        T dose_per_mu_count_correction;
+    };
+    // SigmaX, SigmaY, SigmaXPrime, SigmaYPrime
+    struct spot_correction{
+        T cross_line ;
+        T in_line    ;
+        T angular_cross_line ;
+        T angular_in_line    ;
+    };
+    
+    const std::map<T, mu_correction> mu_to_particle_   = {
+        {70.0,  { 1.0, 1.0}},
+        {80.0,  { 1.12573609032495, 0.989255716854649}},
+        {90.0,  { 1.25147616113001, 0.973421729297953 }},
+        {100.0, { 1.36888442326936, 0.967281770613755 }},
+        {110.0, { 1.48668286253201, 0.958215625815887 }},
+        {120.0, { 1.60497205195899, 0.946937840980162 }},
+        {130.0, { 1.71741194754422, 0.942685675037711 }},
+        {140.0, { 1.82898327045955, 0.940168906626851 }}, 
+        {150.0, { 1.94071715123743, 0.931161417057087 }},
+        {160.0, { 2.04829230739643, 0.918762676945622 }},
+        {170.0, { 2.16168786761159, 0.904569498824145 }},
+        {180.0, { 2.27629228444253, 0.888164591949398 }}, 
+        {190.0, { 2.39246901674031, 0.876689052268837 }},
+        {200.0, { 2.50561983301185, 0.872826195199581 }},
+        {210.0, { 2.63593473689952, 0.871540965585644 }},
+        {220.0, { 2.75663921459094, 0.859481169160383 }}, 
+        {230.0, { 2.89392497566575, 0.8524232713089 }}
+    };
+
+    const std::map<T, spot_correction>  spot_to_emittance_  = {
+        {70.0 , {7.0,  7.6,  0.0043,  0.0043 }},
+        {100.0, {5.1,  6.0,  0.0032,  0.0032 }},
+        {150.0, {4.1,  4.4,  0.0024,  0.0024 }},
+        {162.0, {3.8,  3.9,  0.0023,  0.0023 }},
+        {174.0, {1.4,  1.4,  0.0015,  0.0015 }},
+        {182.0, {1.0,  1.0,  0.0014,  0.0014 }},
+        {190.0, {1.0,  0.9,  0.0014,  0.0014 }},
+        {206.0, {0.94, 1.05, 0.0013,  0.0013 }},
+        {230.0, {2.0 , 2.0,  0.00125, 0.00125 }}
+    };
+
+    ///< Interpolation function
+    std::function<T(T, T, T, T, T)> intpl = 
+        [](T x, T x0, T x1, T y0, T y1){return ( x1 == x0)? y0 : y0 + (x-x0)*(y1-y0)/(x1 - x0);};
+
 public:
     g2()
     {
         treatment_machine_ion<T>::SAD_[0] = 2597.0 ;
         treatment_machine_ion<T>::SAD_[1] = 2223.0 ;
+
+        
     }
 
     ~g2(){;}
@@ -217,8 +270,29 @@ public:
         pos1.x = (treatment_machine_ion<T>::SAD_[0] - pos1.z) * dir1.x ;
         pos1.y = (treatment_machine_ion<T>::SAD_[1] - pos1.z) * dir1.y ;
 
+        ///< MU to Particles
+        auto spot_up = spot_to_emittance_.lower_bound(s0.e);
+        if (spot_up == spot_to_emittance_.begin() ) std::cerr<<"out-of-bound\n";
+        auto spot_down = std::prev(spot_up,1);
+        auto down = spot_down->second;
+        auto up   = spot_up -> second;
+
+        T mid_x  = intpl(s0.e, spot_down->first, spot_up->first, down.cross_line,  up.cross_line);
+        T mid_y  = intpl(s0.e, spot_down->first, spot_up->first, down.in_line,  up.in_line);
+        T mid_xp = intpl(s0.e,
+                         spot_down->first, spot_up->first,
+                         down.angular_cross_line,  up.angular_cross_line);
+        T mid_yp = intpl(s0.e,
+                         spot_down->first, spot_up->first,
+                         down.angular_in_line,  up.angular_in_line);
+        
         std::array<T,6> spot_pos_range = {pos0.x, pos1.x, pos0.y, pos1.y, pos0.z, pos1.z};
-        std::array<T,6> spot_sigma     = {s0.fwhm_x/float(SIGMA2FWHM),  s0.fwhm_y/float(SIGMA2FWHM), 0.0, 0.0, 0.0, 0.0};
+        std::array<T,6> spot_sigma     = {mid_x,
+                                          mid_y,
+                                          0.0,
+                                          mid_xp,
+                                          mid_yp,
+                                          0.0};
         std::array<T,2> corr           = {0.0, 0.0};
 
         //spot direction mean is calculated from the sampled position between x0 and x1
@@ -244,18 +318,26 @@ public:
                          float scale)
     {
 
-        //This is a madeup.
-        /*
-        double db_IC2_gain_coeff1  = 3.0*1.23547*153.69; //      #unitless
-        double db_IC2_gain_coeff2  = -0.6891;             //    #Exponent of kinetic energy
-        double db_ChargePerMU_IC2  = 3.0e-9;              //
-        double db_MU_per_IC_charge = 1.0/db_ChargePerMU_IC2 ; //
-        //#number of PBS MU's per Columnb in signal from IC2(MU2/IC2_C)
-        double db_C_per_Gp = 1.0e+9/6.241e+18;
-        double MU2GP = db_C_per_Gp*db_IC2_gain_coeff1*std::pow(s.e, db_IC2_gain_coeff2)*db_MU_per_IC_charge;
-        */
-        ///TODO
-        return 1e9*s.meterset/scale;
+        
+        auto mu_up = mu_to_particle_.lower_bound(s.e);
+        if (mu_up == mu_to_particle_.begin() ) std::cerr<<"out-of-bound\n";
+        auto mu_down = std::prev(mu_up,1);
+        auto down = mu_down->second;
+        auto up   = mu_up -> second;
+        
+        T mid_dose_correction    = intpl(s.e,
+                                         mu_down->first,
+                                         mu_up->first,
+                                         down.proton_per_dose_correction,
+                                         up.proton_per_dose_correction);
+        
+        T mid_mu_correction    = intpl(s.e,
+                                       mu_down->first,
+                                       mu_up->first,
+                                       down.dose_per_mu_count_correction,
+                                       up.dose_per_mu_count_correction);
+
+        return (s.meterset*mid_dose_correction*mid_mu_correction)/scale;
     }
 
 

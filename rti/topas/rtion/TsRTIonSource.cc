@@ -69,7 +69,9 @@ TsRTIonSource::TsRTIonSource(TsParameterManager* pM,
 TsRTIonSource::~TsRTIonSource() {;}
 
 
-void TsRTIonSource::ResolveParameters(){
+void
+TsRTIonSource::ResolveParameters()
+{
     
     /**
      * Particle type: proton (default)
@@ -252,7 +254,9 @@ void TsRTIonSource::ResolveParameters(){
     
 }
 
-G4bool TsRTIonSource::ReadHistoriesPerBeamlet(std::queue<TsPrimaryParticle>* particleBuffer){
+G4bool
+TsRTIonSource::ReadHistoriesPerBeamlet(std::queue<TsPrimaryParticle>* particleBuffer)
+{
     #ifdef TOPAS_MT
 	    G4AutoLock l(&move_to_nextspot);
     #endif
@@ -291,9 +295,8 @@ G4bool TsRTIonSource::ReadHistoriesPerBeamlet(std::queue<TsPrimaryParticle>* par
 
 
 void
-TsRTIonSource::ExportDICOMCoordinateToParameters(
-        rti::coordinate_transform<float>& p
-){
+TsRTIonSource::ExportDICOMCoordinateToParameters( rti::coordinate_transform<float>& p)
+{
     //1. isocenter
 	this->Wrap3Vector(p.translation, "IsoCenter");
 
@@ -312,10 +315,9 @@ TsRTIonSource::ExportDICOMCoordinateToParameters(
 }
 
 void 
-TsRTIonSource::Wrap3Vector(
-	rti::vec3<float> vec, 
-    const char* name, 
-    const char* unit)
+TsRTIonSource::Wrap3Vector(	rti::vec3<float> vec, 
+                            const char*      name, 
+                            const char*      unit)
 {
 	G4String param_name; 
 	G4String trans_value;
@@ -334,10 +336,9 @@ TsRTIonSource::Wrap3Vector(
 }
 
 void 
-TsRTIonSource::Wrap1Vector(
-    float value, 
-    const char* name, 
-    const char* unit)
+TsRTIonSource::Wrap1Vector( float value, 
+                            const char* name, 
+                            const char* unit)
 {
 	G4String param_name; 
 	G4String trans_value;
