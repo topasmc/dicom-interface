@@ -271,21 +271,32 @@ public:
         pos1.y = (treatment_machine_ion<T>::SAD_[1] - pos1.z) * dir1.y ;
 
         ///< MU to Particles
-        auto spot_up = spot_to_emittance_.lower_bound(s0.e);
-        if (spot_up == spot_to_emittance_.begin() ) std::cerr<<"out-of-bound\n";
-        auto spot_down = std::prev(spot_up,1);
-        auto down = spot_down->second;
-        auto up   = spot_up -> second;
-
-        T mid_x  = intpl(s0.e, spot_down->first, spot_up->first, down.cross_line,  up.cross_line);
-        T mid_y  = intpl(s0.e, spot_down->first, spot_up->first, down.in_line,  up.in_line);
-        T mid_xp = intpl(s0.e,
-                         spot_down->first, spot_up->first,
-                         down.angular_cross_line,  up.angular_cross_line);
-        T mid_yp = intpl(s0.e,
-                         spot_down->first, spot_up->first,
-                         down.angular_in_line,  up.angular_in_line);
+        T mid_x  = spot_to_emittance_.begin() -> second.cross_line ;
+        T mid_y  = spot_to_emittance_.begin() -> second.in_line ;
+        T mid_xp = spot_to_emittance_.begin() -> second.angular_cross_line ;
+        T mid_yp = spot_to_emittance_.begin() -> second.angular_in_line ;
         
+        auto spot_up = spot_to_emittance_.lower_bound(s0.e);
+        if (spot_up != spot_to_emittance_.begin() ){
+            auto spot_down = std::prev(spot_up,1);
+            auto down = spot_down->second;
+            auto up   = spot_up -> second;
+
+            mid_x  = intpl(s0.e, spot_down->first, spot_up->first, down.cross_line,  up.cross_line);
+            mid_y  = intpl(s0.e, spot_down->first, spot_up->first, down.in_line,  up.in_line);
+            mid_xp = intpl(s0.e,
+                           spot_down->first, spot_up->first,
+                           down.angular_cross_line,  up.angular_cross_line);
+            mid_yp = intpl(s0.e,
+                           spot_down->first, spot_up->first,
+                           down.angular_in_line,  up.angular_in_line);
+
+        } 
+        std::cerr<<"For " << s0.e <<", "
+                 << mid_x <<", "
+                 << mid_y <<", "
+                 << mid_xp << ", "
+                 << mid_yp <<", " <<"\n";
         std::array<T,6> spot_pos_range = {pos0.x, pos1.x, pos0.y, pos1.y, pos0.z, pos1.z};
         std::array<T,6> spot_sigma     = {mid_x,
                                           mid_y,
@@ -317,26 +328,33 @@ public:
     characterize_history(const rti::beam_module_ion::spot& s,
                          float scale)
     {
-
+        T mid_dose_correction = mu_to_particle_.begin()->second.proton_per_dose_correction;
+        T mid_mu_correction   = mu_to_particle_.begin()->second.dose_per_mu_count_correction;
         
         auto mu_up = mu_to_particle_.lower_bound(s.e);
-        if (mu_up == mu_to_particle_.begin() ) std::cerr<<"out-of-bound\n";
-        auto mu_down = std::prev(mu_up,1);
-        auto down = mu_down->second;
-        auto up   = mu_up -> second;
+        if ( mu_up != mu_to_particle_.begin() ){
+            auto mu_down = std::prev(mu_up,1);
+            auto down = mu_down->second;
+            auto up   = mu_up -> second;
         
-        T mid_dose_correction    = intpl(s.e,
+            mid_dose_correction    = intpl(s.e,
+                                           mu_down->first,
+                                           mu_up->first,
+                                           down.proton_per_dose_correction,
+                                           up.proton_per_dose_correction);
+        
+            mid_mu_correction    = intpl(s.e,
                                          mu_down->first,
                                          mu_up->first,
-                                         down.proton_per_dose_correction,
-                                         up.proton_per_dose_correction);
+                                         down.dose_per_mu_count_correction,
+                                         up.dose_per_mu_count_correction);
+        }
         
-        T mid_mu_correction    = intpl(s.e,
-                                       mu_down->first,
-                                       mu_up->first,
-                                       down.dose_per_mu_count_correction,
-                                       up.dose_per_mu_count_correction);
-
+        std::cerr<<"For " << s.e <<", "
+                 << mid_dose_correction <<", "
+                 << mid_mu_correction <<", "
+                 << s.meterset << ", "
+                 << (s.meterset*mid_dose_correction*mid_mu_correction/scale) <<", " <<"\n";
         return (s.meterset*mid_dose_correction*mid_mu_correction)/scale;
     }
 
