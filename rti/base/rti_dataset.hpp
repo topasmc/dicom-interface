@@ -327,11 +327,10 @@ public:
         res.clear();
 
         if( vr & gdcm::VR::VRBINARY){
-            /// TODO:
-            //  this routine didn't work for PrivateTag
+            /// TODO: this routine didn't work for PrivateTag
             assert(vr & gdcm::VR::FL);
 
-            size_t ndim = vr.GetLength() ;
+            size_t ndim = vl/sizeof(float);
             res.resize(ndim);
             (void)vm;//unused
             /*
@@ -348,7 +347,7 @@ public:
             */
             bv->GetBuffer( (char*)&res[0],  ndim * sizeof(float)  );
         }else if( vr & gdcm::VR::VRASCII){
-                        //ascii & numeric (int, float)
+            //ascii & numeric (int, float)
             //ascii & IS, DS, -> decimal strings...
             std::string s = std::string( bv->GetPointer(), bv->GetLength() );
             size_t beg = 0;
