@@ -36,7 +36,7 @@ def main(dir, args):
     parser.add_argument('--access', dest='access'   , type=str, required=False, default='0')
     parser.add_argument('--manuf' , dest='manuf'    , type=str, required=False, default='MGH Physics Research')
     parser.add_argument('--station',dest='station'  , type=str, required=False, default='Nashua')
-    parser.add_argument('--institution' , dest='institution', type=str, required=False, default='rbe')
+    parser.add_argument('--institution' , dest='institution', type=str, required=False, default='MGH')
     parser.add_argument('--instaddr' , dest='instaddr', type=str, required=False, default='30 Fruit St, Boston MA 02114, USA')
     parser.add_argument('--physician' , dest='physician', type=str, required=False, default='')
     parser.add_argument('--stDesc', dest='stDesc'  , type=str, required=False, default='For commissioning')
@@ -53,6 +53,7 @@ def main(dir, args):
     parser.add_argument('--lastCal',dest='lastCal' , type=str, required=False, default='')
     parser.add_argument('--stuid' , dest='stuid'   , type=str, required=False, default=uid.generate_uid())
     parser.add_argument('--seuid' , dest='seuid'   , type=str, required=False, default=uid.generate_uid())
+    parser.add_argument('--rseuid' , dest='rseuid' , type=str, required=False, default=uid.generate_uid())
     parser.add_argument('--stid'  , dest='stid'    , type=str, required=False, default='1')
     parser.add_argument('--sen'   , dest='sen'     , type=str, required=False, default='1')
     parser.add_argument('--acqn'  , dest='acqn'    , type=str, required=False, default='1')
@@ -78,7 +79,7 @@ def main(dir, args):
     parser.add_argument('--seZ'   , dest='seZ'     , type=float, required=False, default=0.0)
     parser.add_argument('--ssd'   , dest='ssd'     , type=float, required=False, default=2000.0)
     parser.add_argument('--beam'        , dest='beam'       , type=str  , required=False, nargs='?', default='G000'  )
-    parser.add_argument('--machine'     , dest='machine'    , type=str  , required=False, nargs='?', default='1.1')
+    parser.add_argument('--machine'     , dest='machine'    , type=str  , required=False, nargs='?', default='Gantry')
     parser.add_argument('--dosimeter'   , dest='dosimeter'  , type=str  , required=False, nargs='?', default='NP'    )
     parser.add_argument('--tuneid'      , dest='tuneid'     , type=str  , required=False, nargs='?', default='Tune'  )
     parser.add_argument('--gangle'      , dest='gangle'     , type=int  , required=False, nargs='?', default=0       )
@@ -94,7 +95,7 @@ def main(dir, args):
         if not os.path.exists(os.path.join(args.outdir,'ct')):
             print('Creating output subfolder',os.path.join(args.outdir,'ct'))
             os.mkdir(os.path.join(args.outdir,'ct'))
-        
+
     # Define geometry of water cube
     rows = 512
     columns = 512
@@ -245,7 +246,7 @@ def main(dir, args):
     ds.SoftwareVersions         = args.sw
     ds.DateOfLastCalibration    = args.lastCal
     ds.StudyInstanceUID         = args.stuid
-    ds.SeriesInstanceUID        = args.seuid
+    ds.SeriesInstanceUID        = args.rseuid
     ds.StudyID                  = args.stid
     ds.SeriesNumber             = args.sen
     ds.InstanceNumber           = args.acqn
