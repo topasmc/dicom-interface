@@ -63,16 +63,13 @@ def main(dir, args):
     parser.add_argument('--sadX'  , dest='sadX'    , type=float, required=False, default=2000.0)
     parser.add_argument('--sadY'  , dest='sadY'    , type=float, required=False, default=1800.0)
     parser.add_argument('--nBlocks',dest='nBlocks' , type=int, required=False, default=0)
-    parser.add_argument('--isoX'  , dest='isoX'    , type=float, required=False, default=0.0)
-    parser.add_argument('--isoY'  , dest='isoY'    , type=float, required=False, default=0.0)
-    parser.add_argument('--isoZ'  , dest='isoZ'    , type=float, required=False, default=0.0)
+    parser.add_argument('--iso'   , dest='iso'     , type=float, required=False, nargs='*', default=[0.0, 0.0, 0.0]) # mm
     parser.add_argument('--snout' , dest='snout'   , type=str, required=False, default='')
     parser.add_argument('--nRS'   , dest='nRS'     , type=int, required=False, default=0)
     parser.add_argument('--rsID'  , dest='rsID'    , type=str, required=False, default='')
     parser.add_argument('--snPos' , dest='snPos'   , type=float, required=False, default=200)
-    parser.add_argument('--seX'   , dest='seX'     , type=float, required=False, default=0.0)
-    parser.add_argument('--seY'   , dest='seY'     , type=float, required=False, default=0.0)
-    parser.add_argument('--seZ'   , dest='seZ'     , type=float, required=False, default=0.0)
+    parser.add_argument('--se'    , dest='se'      , type=float, required=False, nargs='*', default=[0.0, 0.0, 0.0]) # mm
+    parser.add_argument('--ipp'   , dest='ipp'      , type=float, required=False, nargs='*', default=[-512/2+0.5,(-6+0.5), 512/2-0.5]) # mm
     parser.add_argument('--ssd'   , dest='ssd'     , type=float, required=False, default=2000.0)
     parser.add_argument('--beam'        , dest='beam'       , type=str  , required=False, nargs='?', default='G000'  )
     parser.add_argument('--machine'     , dest='machine'    , type=str  , required=False, nargs='?', default='1.1')
@@ -104,6 +101,7 @@ def main(dir, args):
     lat_sigma = args.lat_sigma
     pPerSpot = args.pPerSpot
     assert(len(energies) == len(lat_sigma) == len(pPerSpot))
+    assert(len(args.se) == len(args.iso) == len(args.ipp) == 3)
     
     # Check output dir
     if not os.path.exists(args.outdir):
@@ -192,7 +190,8 @@ def main(dir, args):
         ds.AcquisitionNumber        = args.acqn
         ds.InstanceNumber           = sl + 1
         # Zero (origin) is at surface of water on anterior side, and centered in the other axes. Image position refers to center point of corner voxel.
-        ds.ImagePositionPatient     = [(-columns/2+0.5)*wcolumns,(-margin+0.5)*wrows, (slices/2-0.5-sl)*wslices]
+        ds.ImagePositionPatient     = args.ipp
+        ds.ImagePositionPatient[2] -= sl*wslices
         ds.ImageOrientationPatient  = ['1', '0', '0', '0', '1', '0']
         ds.FrameOfReferenceUID      = args.forUID
         ds.PositionReferenceIndicator = ''#'OM'
@@ -279,7 +278,7 @@ def main(dir, args):
     dsfx.NumberOfBrachyApplicationSetups = 0
     dsfx.ReferencedBeamSequence = Sequence()
     dsfx_b = Dataset()
-    dsfx_b.BeamDoseSpecificationPoint = [args.isoX,args.isoY,args.isoZ]
+    dsfx_b.BeamDoseSpecificationPoint = args.iso
     dsfx_b.BeamDose = 1 #dummy
     dsfx_b.BeamMeterset = float(sum(pPerSpot))#pPerSpot protons per spot
     dsfx_b.ReferencedBeamNumber = 1
@@ -356,8 +355,8 @@ def main(dir, args):
                 icpoi.TableTopVerticalPosition     = 0
                 icpoi.TableTopLongitudinalPosition = 0
                 icpoi.TableTopLateralPosition      = 0
-                icpoi.IsocenterPosition            = [args.isoX,args.isoY,args.isoZ]
-                icpoi.SurfaceEntryPoint            = [args.seX,args.seY,args.seZ]
+                icpoi.IsocenterPosition            = args.iso
+                icpoi.SurfaceEntryPoint            = args.se
                 icpoi.SourceToSurfaceDistance      = args.ssd
             icpoi.CumulativeMetersetWeight = cweight
             if j == 0:
