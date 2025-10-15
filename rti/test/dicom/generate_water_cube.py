@@ -16,10 +16,6 @@ import numpy as np
 
 def main(dir, args):
 
-    energies = [90 + i*5 for i in range(0,29)] # in MeV, they go from 90 to 230 in steps of 5 MeV
-    lat_sigma = [6 for energy in energies] # in mm
-    print(energies, lat_sigma)
-
     parser = argparse.ArgumentParser(description='Generate an ideal CT of a water cube and a dummy RTplan with certain energy layers, defined in script. Every energy layer has a single spot at (0,0)')
 
     parser.add_argument('--outdir', dest='outdir'   , type=str, required=True )
@@ -83,8 +79,29 @@ def main(dir, args):
     parser.add_argument('--dosimeter'   , dest='dosimeter'  , type=str  , required=False, nargs='?', default='NP'    )
     parser.add_argument('--tuneid'      , dest='tuneid'     , type=str  , required=False, nargs='?', default='Tune'  )
     parser.add_argument('--gangle'      , dest='gangle'     , type=int  , required=False, nargs='?', default=0       )
+    # Define geometry of water cube
+    parser.add_argument('--rows'    , dest='rows'    , type=int  , required=False, nargs='?', default=512)
+    parser.add_argument('--columns' , dest='columns' , type=int  , required=False, nargs='?', default=512)
+    parser.add_argument('--slices'  , dest='slices'  , type=int  , required=False, nargs='?', default=512)
+    parser.add_argument('--wrows'   , dest='wrows'   , type=float, required=False, nargs='?', default=1  )# mm
+    parser.add_argument('--wcolumns', dest='wcolumns', type=float, required=False, nargs='?', default=1  )# mm
+    parser.add_argument('--wslices' , dest='wslices' , type=float, required=False, nargs='?', default=1  )# mm
+    parser.add_argument('--margin'  , dest='margin'  , type=int  , required=False, nargs='?', default=6  )# pixels of air around water cube, so that water cube is 50cm * 50cm * 50cm
+    # Proton energies and their sigma
+    parser.add_argument('--energies', dest='energies', type=float, required=False, nargs='?', default=[90 + i*5 for i in range(0,29)])# MeV
+    parser.add_argument('--lat_sigma',dest='lat_sigma',type=float, required=False, nargs='?', default=[6 for i in range(0,29)])# mm
+   
     args = parser.parse_args(args)
-
+    rows = args.rows
+    columns = args.columns
+    slices = args.slices
+    wrows = args.wrows
+    wcolumns = args.wcolumns
+    wslices = args.wslices
+    margin = args.margin
+    energies = args.energies
+    lat_sigma = args.lat_sigma
+    
     # Check output dir
     if not os.path.exists(args.outdir):
         print('Creating output folder',args.outdir)
@@ -95,15 +112,6 @@ def main(dir, args):
         if not os.path.exists(os.path.join(args.outdir,'ct')):
             print('Creating output subfolder',os.path.join(args.outdir,'ct'))
             os.mkdir(os.path.join(args.outdir,'ct'))
-
-    # Define geometry of water cube
-    rows = 512
-    columns = 512
-    slices = 512
-    wrows = 1 # mm
-    wcolumns = 1 # mm
-    wslices = 1 # mm
-    margin = 6 # pixels of air around water cube, so that water cube is 50cm * 50cm * 50cm
 
     cube = np.full((slices, rows, columns), -1000, dtype='int16') # -1000 HU as initialization value (air)
     cube[margin:-margin,margin:-margin,margin:-margin] = 0 # 0 HU cube (water)
