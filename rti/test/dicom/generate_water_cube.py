@@ -124,7 +124,7 @@ def main(dir, args):
     cube[margin:-margin,margin:-margin,margin:-margin] = 0 # 0 HU cube (water)
     if args.hetLength > 0:
         cube[margin:-margin,margin:-margin,margin+args.hetOffset:margin+args.hetOffset+args.hetLength] = args.bone
-        cube[margin:margin+int(slices/2),margin:-margin,margin+args.hetOffset:margin+args.hetOffset+args.hetLength] = args.lung
+        cube[margin:margin+int((slices-2*margin)/2),margin:-margin,margin+args.hetOffset:margin+args.hetOffset+args.hetLength] = args.lung
 
     # Generate CT image
     for sl in range(slices):
