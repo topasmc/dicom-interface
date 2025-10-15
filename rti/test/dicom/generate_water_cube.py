@@ -90,6 +90,7 @@ def main(dir, args):
     # Proton energies and their sigma
     parser.add_argument('--energies', dest='energies', type=float, required=False, nargs='?', default=[90 + i*5 for i in range(0,29)])# MeV
     parser.add_argument('--lat_sigma',dest='lat_sigma',type=float, required=False, nargs='?', default=[6 for i in range(0,29)])# mm
+    parser.add_argument('--pPerSpot' ,dest='pPerSpot', type=float, required=False, nargs='?', default=[1e9 for i in range(0,29)])# protons per spot
    
     args = parser.parse_args(args)
     rows = args.rows
@@ -101,6 +102,7 @@ def main(dir, args):
     margin = args.margin
     energies = args.energies
     lat_sigma = args.lat_sigma
+    pPerSpot = args.pPerSpot
     
     # Check output dir
     if not os.path.exists(args.outdir):
@@ -278,7 +280,7 @@ def main(dir, args):
     dsfx_b = Dataset()
     dsfx_b.BeamDoseSpecificationPoint = [args.isoX,args.isoY,args.isoZ]
     dsfx_b.BeamDose = 1 #dummy
-    dsfx_b.BeamMeterset = float(len(energies)*1e9)#1e9 protons per spot
+    dsfx_b.BeamMeterset = float(sum(pPerSpot))#pPerSpot protons per spot
     dsfx_b.ReferencedBeamNumber = 1
     dsfx.ReferencedBeamSequence.append(dsfx_b)
     ds.FractionGroupSequence.append(dsfx)
@@ -314,7 +316,7 @@ def main(dir, args):
     be.NumberOfCompensators   = 0
     be.NumberOfBoli           = 0
     be.NumberOfBlocks         = args.nBlocks
-    be.FinalCumulativeMetersetWeight = int(1e9*len(energies)) # 1e9 protons per spot (energy)
+    be.FinalCumulativeMetersetWeight = int(sum(pPerSpot)) # pPerSpot protons per spot (energy)
     be.NumberOfControlPoints  = 2*len(energies)
     be.ScanMode                   = 'MODULATED'
     be.VirtualSourceAxisDistances = [args.sadX, args.sadY]
@@ -368,7 +370,7 @@ def main(dir, args):
             icpoi.ScanSpotTuneID = args.tuneid
             icpoi.NumberOfScanSpotPositions = 1
             icpoi.ScanSpotPositionMap = [0.0, 0.0]
-            icpoi.ScanSpotMetersetWeights = 1e9 if j == 0 else 0
+            icpoi.ScanSpotMetersetWeights = pPerSpot[len(energies)-i-1] if j == 0 else 0
             cweight += icpoi.ScanSpotMetersetWeights
             icpoi.ScanningSpotSize = [lat_sigma[len(energies)-i-1],lat_sigma[len(energies)-i-1]]
             icpoi.NumberOfPaintings = 1
