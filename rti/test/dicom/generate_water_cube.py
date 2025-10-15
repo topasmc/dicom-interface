@@ -88,9 +88,9 @@ def main(dir, args):
     parser.add_argument('--wslices' , dest='wslices' , type=float, required=False, nargs='?', default=1  )# mm
     parser.add_argument('--margin'  , dest='margin'  , type=int  , required=False, nargs='?', default=6  )# pixels of air around water cube, so that water cube is 50cm * 50cm * 50cm
     # Proton energies and their sigma
-    parser.add_argument('--energies', dest='energies', type=float, required=False, nargs='?', default=[90 + i*5 for i in range(0,29)])# MeV
-    parser.add_argument('--lat_sigma',dest='lat_sigma',type=float, required=False, nargs='?', default=[6 for i in range(0,29)])# mm
-    parser.add_argument('--pPerSpot' ,dest='pPerSpot', type=float, required=False, nargs='?', default=[1e9 for i in range(0,29)])# protons per spot
+    parser.add_argument('--energies', dest='energies', type=float, required=False, nargs='*', default=[90 + i*5 for i in range(0,29)])# MeV
+    parser.add_argument('--lat_sigma',dest='lat_sigma',type=float, required=False, nargs='*', default=[6 for i in range(0,29)])# mm
+    parser.add_argument('--pPerSpot' ,dest='pPerSpot', type=float, required=False, nargs='*', default=[1e9 for i in range(0,29)])# protons per spot
    
     args = parser.parse_args(args)
     rows = args.rows
@@ -103,6 +103,7 @@ def main(dir, args):
     energies = args.energies
     lat_sigma = args.lat_sigma
     pPerSpot = args.pPerSpot
+    assert(len(energies) == len(lat_sigma) == len(pPerSpot))
     
     # Check output dir
     if not os.path.exists(args.outdir):
