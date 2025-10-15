@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #__author__ = 'Fernando Hueso-Gonzalez'
 # python3 generate_water_cube.py --outdir /tmp/watercube50/
+# python3 rti/test/dicom/generate_water_cube.py --outdir /tmp/watercube/ --energies 50 100 150 --lat_sigma 15 15 15 --pPerSpot 5e7 5e7 5e7 --rows 110 --columns 360 --slices 110 --margin 5 --gangle 270 --beam G270 --ipp -179.5 -54.5 54.5 --hetLength 50 --hetOffset 75
 
 import argparse
 import sys
