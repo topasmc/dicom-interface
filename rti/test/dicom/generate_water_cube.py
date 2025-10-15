@@ -88,6 +88,11 @@ def main(dir, args):
     parser.add_argument('--energies', dest='energies', type=float, required=False, nargs='*', default=[90 + i*5 for i in range(0,29)])# MeV
     parser.add_argument('--lat_sigma',dest='lat_sigma',type=float, required=False, nargs='*', default=[6 for i in range(0,29)])# mm
     parser.add_argument('--pPerSpot' ,dest='pPerSpot', type=float, required=False, nargs='*', default=[1e9 for i in range(0,29)])# protons per spot
+    # Optional heterogeneity
+    parser.add_argument('--lung'      , dest='lung'  , type=int  , required=False, nargs='?', default=-990) # HU
+    parser.add_argument('--bone'      , dest='bone'  , type=int  , required=False, nargs='?', default=1000) # HU
+    parser.add_argument('--hetOffset', dest='hetOffset', type=int, required=False, nargs='?', default=0) # columns after margin
+    parser.add_argument('--hetLength', dest='hetLength', type=int, required=False, nargs='?', default=0) # columns
    
     args = parser.parse_args(args)
     rows = args.rows
@@ -116,6 +121,9 @@ def main(dir, args):
 
     cube = np.full((slices, rows, columns), -1000, dtype='int16') # -1000 HU as initialization value (air)
     cube[margin:-margin,margin:-margin,margin:-margin] = 0 # 0 HU cube (water)
+    if args.hetLength > 0:
+        cube[margin:-margin,margin:-margin,margin+args.hetOffset:margin+args.hetOffset+args.hetLength] = args.bone
+        cube[margin:margin+int(slices/2),margin:-margin,margin+args.hetOffset:margin+args.hetOffset+args.hetLength] = args.lung
 
     # Generate CT image
     for sl in range(slices):
