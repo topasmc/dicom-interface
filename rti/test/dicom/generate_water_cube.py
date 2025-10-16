@@ -90,8 +90,8 @@ def main(dir, args):
     parser.add_argument('--lat_sigma',dest='lat_sigma',type=float, required=False, nargs='*', default=[6 for i in range(0,29)])# mm
     parser.add_argument('--pPerSpot' ,dest='pPerSpot', type=float, required=False, nargs='*', default=[1e9 for i in range(0,29)])# protons per spot
     # Optional heterogeneity
-    parser.add_argument('--lung'      , dest='lung'  , type=int  , required=False, nargs='?', default=-990) # HU
-    parser.add_argument('--bone'      , dest='bone'  , type=int  , required=False, nargs='?', default=1000) # HU
+    parser.add_argument('--lung'      , dest='lung'  , type=int  , required=False, nargs='?', default=-700) # HU
+    parser.add_argument('--bone'      , dest='bone'  , type=int  , required=False, nargs='?', default=500) # HU
     parser.add_argument('--hetOffset', dest='hetOffset', type=int, required=False, nargs='?', default=0) # columns after margin
     parser.add_argument('--hetLength', dest='hetLength', type=int, required=False, nargs='?', default=0) # columns
    
