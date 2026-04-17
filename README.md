@@ -82,7 +82,7 @@ $ cmake -DTOPAS_EXTENSIONS_DIR=/<your_sw_path>/rti.git/rti/topas/rtion .
 $ make -j4
 ```
 
-For more up-to date TOPAS versions (3.9), you can avoid modifying the CMakeLists.txt and instead do (for example):
+You can also modify the CMakeLists.txt to just contain TOPAS_EXTENSIONS_INCLUDE_DIR and instead do (for example):
 
 ```bash
 $ cmake -DTOPAS_EXTENSIONS_INCLUDE_DIR=/<your_sw_path>/dicom-interface/ -DTOPAS_EXTENSIONS_DIR=/<your_sw_path>/dicom-interface/rti/topas/rtion .
