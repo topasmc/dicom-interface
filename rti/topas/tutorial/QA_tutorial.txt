@@ -17,9 +17,9 @@ includeFile = QA.txt
 
 # Hands on 4 
 # control number of particles
-# particle per history
-# -1 : 1 history per beamlet
-# 1e6 : 1 history represents 1e6 protons 
+# it represents the decimation factor of particles in RTplan, or by how much the number of histories is scaled down to have a reasonable computation time
+# -1 : 1 history (proton) per beamlet (spot)
+# 1e6 : only simulate 1 history (proton) every real 1e6 protons in RTplan
 # u:So/RTION/ParticlesPerHistory = 1e6
 
 # Hands on 5
