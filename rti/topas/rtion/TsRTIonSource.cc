@@ -234,7 +234,7 @@ TsRTIonSource::ResolveParameters()
         int* v = fPm->GetIntegerVector(GetFullParmName("beamletrange"));
         
         (v[0] <= 0)    ? throw std::runtime_error("Beamlet range error. start id should be from 1") : false ;
-        (v[0] >= v[1]) ? throw std::runtime_error("Beamlet range error. [start=1, stop=end]") : false ;
+        (v[0] > v[1]) ? throw std::runtime_error("Beamlet range error. [start=1, stop=end]") : false ;
         
         //due to index start 0 in beam source
         counter_.start = v[0] - 1 ; 
