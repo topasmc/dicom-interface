@@ -36,3 +36,4 @@ b:Sc/DoseGrid_Dw/OutputToConsole = "FALSE"
 #----------------- LETd --------------------
 #?
 
+# For a more advanced example with 20 proton patient cases, check out https://github.com/SebastiaanBreedveld/TROTS/tree/master/TOPAS_simulation
