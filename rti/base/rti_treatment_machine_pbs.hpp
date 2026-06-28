@@ -42,6 +42,7 @@ protected:
 		T xp ;
 		T yp ;
 		T ratio ;
+        T NPperMU {1.0};
     };
     std::map<T, spot_specification> beamdata_ ;
 
@@ -430,6 +431,9 @@ public:
                     spot_specification s;
                     T                  e;
                     data >> e >> s.E >> s.dE >> s.x >> s.y >> s.xp >> s.yp >> s.ratio ;
+                    T npPerMU;
+                    if (data >> npPerMU)
+                      s.NPperMU = npPerMU;
 		
                     beamdata_.insert(std::make_pair(e,s));
 					/*
@@ -438,7 +442,7 @@ public:
                         s.E <<", " << s.dE <<", " <<
                         s.x <<", " << s.y  <<", " <<
                         s.xp <<", " << s.yp <<", " <<
-                        s.ratio <<"\n";
+                        s.ratio << ", " << s.NPperMU << \n";
 					*/
                 }
             }//spot

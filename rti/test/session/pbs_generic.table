@@ -30,7 +30,7 @@ aperture(mm) 30 40
 "80" 80
 
 [spot]
-# Nominal Energy (MeV), Energy(MeV), Energy Spread (MeV), x (cm), y (cm), xp (rad), yp (rad), ratio
+# Nominal Energy (MeV), Energy(MeV), Energy Spread (MeV), x (cm), y (cm), xp (rad), yp (rad), ratio, ParticlesPerMU
 60.0     60.0  0.0    0.0    0.0   0.0    0.0    1.0
 250.0   250.0  0.0    0.0    0.0   0.0    0.0    1.0
 
