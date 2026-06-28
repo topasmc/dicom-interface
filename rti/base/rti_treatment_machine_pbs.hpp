@@ -120,7 +120,11 @@ public:
         auto down = beam_down->second;
         auto up   = beam_up -> second;
         T mid_ratio = intpl(s.e, beam_down->first, beam_up->first, down.ratio, up.ratio);
-        return s.meterset * mid_ratio / scale;
+        T np_per_mu = 1.0;
+        // TODO:
+        // if (primaryDosimeterUnit == "MU")
+        // T np_per_mu = intpl(s.e, beam_down->first, beam_up->first, down.NPperMU, up.NPperMU);
+        return s.meterset * np_per_mu * mid_ratio / scale;
     }
     
     //virtual
