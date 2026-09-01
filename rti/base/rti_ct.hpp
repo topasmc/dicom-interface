@@ -121,7 +121,7 @@ public:
         for(size_t i = 0 ; i < nx ; ++i){
             rect3d<int16_t, R>::x_[i] = x0 + dx_ * i;
         }
-        rect3d<int16_t, R>::y_ = new R[nx];
+        rect3d<int16_t, R>::y_ = new R[ny];
         for(size_t i = 0 ; i < ny ; ++i){
             rect3d<int16_t, R>::y_[i] = y0 + dy_ * i;
         }
