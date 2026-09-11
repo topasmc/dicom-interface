@@ -344,6 +344,18 @@ public:
         return beam;
     }
 
+    /// Characterize Virtual Source Axis Distance, it returns read result and also overwrites the internal SAD memebers
+    std::vector<float>
+    characterize_VSAD(
+        const rti::dataset* beam_ds,
+        rti::modality_type mod)
+    {
+        std::vector<float> vsad(2, 0);
+        beam_ds->get_values("VirtualSourceAxisDistances" , sm); // 300a,030a
+        treatment_machine_ion<T>::SAD_[0] = vsad[0];
+        treatment_machine_ion<T>::SAD_[1] = vsad[1];
+    }
+
 };
 
 }
