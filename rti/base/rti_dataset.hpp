@@ -67,6 +67,7 @@ seqtags_per_modality =
     },
     {IONPLAN,{ 
         {"beam" , gdcm::Tag(0x300a,0x03a2)},
+        {"vsad" , gdcm::Tag(0x300a,0x030a)},
         {"snout", gdcm::Tag(0x300a,0x030c)},
         {"rs"   , gdcm::Tag(0x300a,0x0314)}, ///< range shifter sequence
         {"rsss" , gdcm::Tag(0x300a,0x0360)}, ///< range shifter setting sequence
