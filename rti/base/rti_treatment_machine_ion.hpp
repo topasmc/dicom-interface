@@ -127,7 +127,7 @@ public:
 
         std::vector<std::string> scan_mode(1);
         ds->get_values("ScanMode",scan_mode);
-		//ds->get_values("SAD",?);?
+		characterize_VSAD(ds, m);
 
         if( !scan_mode[0].compare("MODULATED") ){
             std::runtime_error("Only MODULATED scan mode is supported");
@@ -350,10 +350,12 @@ public:
         const rti::dataset* beam_ds,
         rti::modality_type mod)
     {
-        std::vector<float> vsad(2, 0);
-        beam_ds->get_values("VirtualSourceAxisDistances" , sm); // 300a,030a
-        treatment_machine_ion<T>::SAD_[0] = vsad[0];
-        treatment_machine_ion<T>::SAD_[1] = vsad[1];
+        (void)mod;
+        std::vector<float> vsad(2, 0.f);
+        beam_ds->get_values("VirtualSourceAxisDistances" , vsad); // 300a,030a
+        if (vsad[0] !=0.f) treatment_machine_ion<T>::SAD_[0] = vsad[0];
+        if (vsad[1] !=0.f) treatment_machine_ion<T>::SAD_[1] = vsad[1];
+        return vsad;
     }
 
 };
