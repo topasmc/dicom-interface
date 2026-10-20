@@ -48,8 +48,9 @@ public:
     size_t
     characterize_history(
         const rti::beam_module_ion::spot& s, 
-        float scale)
+        float scale, const std::string primaryDosimeterUnit="")
     {
+        (void)primaryDosimeterUnit; // not yet implemented MU 2 NP conversion
         return s.meterset / scale;
     }
     

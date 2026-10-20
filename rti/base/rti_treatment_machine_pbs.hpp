@@ -112,7 +112,7 @@ public:
     size_t
     characterize_history(
         const rti::beam_module_ion::spot& s, 
-        float scale)
+        float scale, const std::string primaryDosimeterUnit="")
     {
         auto beam_up  = beamdata_.lower_bound(s.e);
         if(beam_up   == beamdata_.begin() ) std::cerr<<"out-of-bound\n";
@@ -121,9 +121,9 @@ public:
         auto up   = beam_up -> second;
         T mid_ratio = intpl(s.e, beam_down->first, beam_up->first, down.ratio, up.ratio);
         T np_per_mu = 1.0;
-        // TODO:
-        // if (primaryDosimeterUnit == "MU")
-        // T np_per_mu = intpl(s.e, beam_down->first, beam_up->first, down.NPperMU, up.NPperMU);
+        if (primaryDosimeterUnit == "MU")
+          np_per_mu = intpl(s.e, beam_down->first, beam_up->first, down.NPperMU, up.NPperMU);
+          
         return s.meterset * np_per_mu * mid_ratio / scale;
     }
     
@@ -195,11 +195,13 @@ public:
         auto down = beam_down->second;
         auto up   = beam_up -> second;
         T mid_e     = intpl(s.e, beam_down->first, beam_up->first, down.E, up.E);
-        T mid_de    = intpl(s.e, down.E, up.E, down.dE, up.dE);
-        T mid_x     = intpl(s.e, down.E, up.E, down.x,  up.x);
-        T mid_y     = intpl(s.e, down.E, up.E, down.y,  up.y);
-        T mid_xp    = intpl(s.e, down.E, up.E, down.xp, up.xp);
-        T mid_yp    = intpl(s.e, down.E, up.E, down.yp, up.yp);
+        T mid_de    = intpl(s.e, beam_down->first, beam_up->first, down.dE, up.dE);
+        T mid_x     = intpl(s.e, beam_down->first, beam_up->first, down.x, up.x);
+        mid_x = (mid_x != -1e9) ? mid_x : s.fwhm_x / T(2.355);
+        T mid_y     = intpl(s.e, beam_down->first, beam_up->first, down.y, up.y);
+        mid_y = (mid_y != -1e9) ? mid_y : s.fwhm_y / T(2.355);
+        T mid_xp    = intpl(s.e, beam_down->first, beam_up->first, down.xp, up.xp);
+        T mid_yp    = intpl(s.e, beam_down->first, beam_up->first, down.yp, up.yp);
 
         auto energy = new rti::norm_1d<T>({mid_e},{mid_de});
 

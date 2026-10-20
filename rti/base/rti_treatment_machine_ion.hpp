@@ -129,6 +129,9 @@ public:
         ds->get_values("ScanMode",scan_mode);
 		//ds->get_values("SAD",?);?
 
+        std::vector<std::string> primaryDosimeterUnit(1);
+        ds->get_values("PrimaryDosimeterUnit",primaryDosimeterUnit);
+
         if( !scan_mode[0].compare("MODULATED") ){
             std::runtime_error("Only MODULATED scan mode is supported");
             //scan_mode[0].compare("UNIFORM")
@@ -145,7 +148,7 @@ public:
         for(size_t i = 0 ; i < nb_spots ; ++i){
             /// Calculate number of histories to be simulated per beamlet
             size_t nb_histories =
-                (scalefactor == -1) ?	1 : this->characterize_history(spots[i], scalefactor);
+                (scalefactor == -1) ?	1 : this->characterize_history(spots[i], scalefactor, primaryDosimeterUnit[0]);
 
             /// Calculate on & off time per beamlet
             /// By default, on is set to 1 sec but off is set to 0 sec.
@@ -204,8 +207,9 @@ public:
     size_t
     characterize_history(
         const rti::beam_module_ion::spot& s,
-        float scale)
+        float scale, const std::string primaryDosimeterUnit="")
     {
+        (void)primaryDosimeterUnit; // not yet implemented MU 2 NP conversion
         return s.meterset / scale;
     }
 
